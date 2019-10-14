@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>标签列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../../back/layuiadmin/layui/css/layui.css" media="all">
+    <script src="../../../../back/layuiadmin/layui/layui.js"></script>
+    <script src="../../../../back/jquery/jquery-3.4.1.js"></script>
+    <script src="../../../../back/config.js"></script>
+    <style>
+        .message{
+            float: left;
+            margin-left: 200px;
+            margin-top: 10px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-fluid">
+    <div id="head" style="margin-top: 10px">
+        <button class="layui-btn add-label">添加标签</button>
+        <button class="layui-btn layui-btn-danger remove-label-btn" style="margin-right: 20px">删除标签</button>
+        <div class="layui-inline">
+            <div class="layui-inline">
+                <label class="layui-form-label">标签ID</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="search-id"  placeholder="请输入标签ID" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">标签名</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="search-name" placeholder="请输入标签名" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">开始</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="search-start-time"   class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">结束</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="search-end-time"   class="layui-input">
+                </div>
+            </div>
+            <button class="layui-btn search-label layui-btn-warm">搜索</button>
+            <button class="layui-btn search-back layui-btn-normal">返回</button>
+        </div>
+    </div>
+    <table id="label" lay-filter="label"></table>
+</div>
+<div id="article-box" style="padding:20px;display: none">
+    <div class="layui-form">
+        <input type="hidden" id="label-id" />
+        <div class="layui-form-item">
+            <label class="layui-form-label">标签名</label>
+            <div class="layui-input-block">
+                <input type="text" id="label-name" name="name" required  placeholder="请输入标签名" class="layui-input">
+            </div>
+            <label class="message"></label>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">标签介绍</label>
+            <div class="layui-input-block">
+                <textarea name="introduce" id="label-introduce" placeholder="请输入介绍内容" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <button class="layui-btn add-label-btn" style="float: right" data-opt="add">添加</button>
+        </div>
+    </div>
+</div>
+<script>
+    var articleBox;
+    var finishPage;
+    var indexPage;
+    layui.use(['table','laydate'], function(){
+        var table = layui.table;
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#search-start-time' //指定元素
+            ,type: "datetime"
+        });
+        laydate.render({
+            elem: '#search-end-time' //指定元素
+            ,type: "datetime"
+        });
+        //第一个实例
+        var tableIns =table.render({
+            elem: '#label'
+            ,url: backRoot+'/back/admin/administrators/label/getList' //数据接口
+            ,page: true //开启分页
+            ,cols: [[ //表头
+                {checkbox: true}
+                ,{field: 'labelId', title: '标签ID', sort: true,align: "center"}
+                ,{field: 'name', title: '标签名',align: "center"}
+                ,{field: 'introduce', title: '标签介绍',align: "center"}
+                ,{field: 'createTime', title: '创建时间',align: "center"}
+                ,{field: 'updateTime', title: '更改时间',align: "center"}
+                ,{field: 'tbStatus', title: '标签状态',align: "center"}
+                , {
+                    title: '操作', align: "center", templet: function (d) {
+                        return '<div><buttom data-id="'+d.labelId+'"  class="layui-btn layui-btn-xs update-label">编辑</buttom><buttom data-id="'+d.labelId+'" class="remove-label layui-btn layui-btn-xs layui-btn-danger">删除</buttom></div>';
+                    }
+                }
+            ]],
+            done: function (res, curr, count) {
+                if (count%10==0){
+                    count++;
+                }
+                finishPage = Math.ceil(count/parseInt($(".layui-laypage-limits").find("option:selected").val()));
+                indexPage = curr;
+            }
+        });
+        $(document).on("click",".search-label",function () {
+            tableIns.reload({
+                where: { //设定异步数据接口的额外参数，任意设
+                    labelId: $("#search-id").val()
+                    ,name: $("#search-name").val()
+                    ,startTime: $("#search-start-time").val()
+                    ,endTime: $("#search-end-time").val()
+                }
+            })
+        })
+        $(document).on("click",".search-back",function () {
+            tableIns.reload({
+                where: { //设定异步数据接口的额外参数，任意设
+                    labelId: ""
+                    ,name: ""
+                    ,startTime: ""
+                    ,endTime: ""
+                }
+            })
+        })
+        $(document).on("click",".add-label",function () {
+            clearForm();
+            articleBox = layer.open({
+                type: 1,
+                content: $('#article-box'),
+                area: ['600px', '340px'],
+                title: "标签添加"
+            });
+        })
+        $(document).on("click",".add-label-btn",function () {
+            if ($(this).attr("data-opt") == "add") {
+            if($.trim($("#label-name").val()) == ""){
+                layer.alert("标签名不可为空！");
+                return false;
+            }
+            layer.load();
+            $.ajax({
+                type: "post",
+                url: backRoot+"/back/admin/administrators/label/add",
+                data: {name:$("#label-name").val(),introduce:$("#label-introduce").val()},
+                success: function (result) {
+                    layer.closeAll("loading");
+                    if(result.code == 200){
+                        layer.alert("添加成功！");
+                        layer.close(articleBox);
+                        tableIns.reload({
+                            page: {
+                                curr: finishPage
+                            }
+                        });
+                        return false;
+                    }
+                    if(result.map.name){
+                        layer.alert(result.map.name);
+                    }
+                    if(result.map.error){
+                        layer.alert(result.map.error);
+                    }
+                }
+            })
+        }
+        if ($(this).attr("data-opt") == "edit") {
+            layer.load();
+            $.ajax({
+                type: "post",
+                url: backRoot+"/back/admin/administrators/label/update",
+                data: {name:$("#label-name").val(),introduce:$("#label-introduce").val(),labelId:$("#label-id").val()},
+                success: function (result) {
+                    layer.closeAll("loading");
+                    if(result.code == 200){
+                        layer.alert("修改成功！");
+                        layer.close(articleBox);
+                        tableIns.reload({
+                            page: {
+                                curr: indexPage
+                            }
+                        });
+                        return false;
+                    }
+                    if(result.map.name){
+                        layer.alert(result.map.name);
+                    }
+                    if(result.map.error){
+                        layer.alert(result.map.error);
+                    }
+                }
+            })
+        }
+    })
+        $(document).on("click",".update-label",function () {
+            $(".add-label-btn").attr("data-opt","edit");
+            $(".add-label-btn").text("修改");
+            $(".message").text("");
+            layer.load();
+            $.ajax({
+                type: "get",
+                url: backRoot+"/back/admin/administrators/label/get/"+$(this).attr("data-id"),
+                success: function (result) {
+                    layer.closeAll("loading");
+                    if(result.code == 200){
+                        $("#label-name").val(result.map.data.name).attr("readonly","readonly").css("color","#999");
+                        $("#label-introduce").val(result.map.data.introduce);
+                        $("#label-id").val(result.map.data.labelId);
+                    }
+                }
+            })
+            articleBox = layer.open({
+                type: 1,
+                content: $('#article-box'),
+                area: ['600px', '340px'],
+                title: "标签修改"
+            });
+        })
+        $(document).on("click",".remove-label",function () {
+            var indexId = $(this).attr("data-id");
+            layer.confirm('是否删除该标签?', function(index){
+                layer.load();
+                $.ajax({
+                    type: "get",
+                    url: backRoot + "/back/admin/administrators/label/remove/"+indexId,
+                    success: function (result) {
+                        layer.closeAll("loading");
+                        if(result.code == 200){
+                            layer.alert("删除成功！");
+                            tableIns.reload({
+                                page:{
+                                    curr:1
+                                }
+                            });
+                            return false;
+                        }
+                        layer.alert(result.map.error);
+                    }
+                })
+                layer.close(index);
+            });
+        })
+        $(document).on("click",".remove-label-btn",function () {
+            var checkStatus = table.checkStatus('label');
+            if (checkStatus.data.length > 0) {
+                layer.confirm('是否删除选中的标签?', function(index){
+                    layer.load();
+                    var arr = [];
+                    for(var i = 0;i<checkStatus.data.length;i++){
+                        arr.push(checkStatus.data[i]);
+                    }
+                    $.ajax({
+                        type: "post",
+                        url: backRoot + "/back/admin/administrators/label/remove",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(arr),
+                        success: function (result) {
+                            layer.closeAll("loading");
+                            if (result.code == 200) {
+                                layer.alert("删除成功！");
+                                tableIns.reload({
+                                    page:{
+                                        curr:1
+                                    }
+                                });
+                                return false;
+                            }
+                            layer.alert(result.map.error);
+                        }
+                    })
+                    layer.close(index);
+                })
+            }
+        })
+    });
+
+</script>
+<script>
+    $("#label-name").blur(function () {
+        if ($.trim($("#label-name").val()) == "") {
+            return false;
+        }
+        if ($(".add-label-btn").attr("data-opt") == "edit") {
+            return false;
+        }
+        $.ajax({
+            type: "post",
+            url: backRoot + "/back/admin/administrators/label/getIsLabel",
+            data: {labelName:$("#label-name").val()},
+            success: function (result) {
+                if (result.code == 200) {
+                    if (result.map.is == "true") {
+                        $(".message").text("该标签名已存在！").css("color","red");
+                    }else{
+                        $(".message").text("该标签名可用！").css("color","green");
+                    }
+                }
+            }
+        })
+    })
+</script>
+<script>
+    function clearForm() {
+        $(".add-label-btn").attr("data-opt","add");
+        $(".add-label-btn").text("添加");
+        $("#label-name").removeAttr("readonly").css("color","#000");
+        $("#label-name").val("");
+        $("#label-introduce").val("");
+        $("#label-id").val("");
+        $(".message").text("");
+    }
+</script>
+</body>
+</html>

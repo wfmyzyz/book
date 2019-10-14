@@ -1,0 +1,31 @@
+package com.wfmyzyz.book;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class BookApplicationTests {
+
+    @Test
+    public void contextLoads() throws Exception {
+        String str = "{\"addressVo\":{},\"dataId\":\"e84ddb5e-068a-4bc7-b66b-9a2fa1bb797a\",\"insureJson\":\"{\\\"accidentInsuranceReqVo\\\":{\\\"insuredList\\\":[{\\\"idType\\\":\\\"3\\\",\\\"gender\\\":\\\"M\\\",\\\"insuredType\\\":\\\"39\\\",\\\"mobile\\\":\\\"13800138000\\\",\\\"idNumber\\\":\\\"13545456\\\",\\\"insuredName\\\":\\\"哈哈\\\",\\\"birthDate\\\":\\\"20110924000000\\\",\\\"policyholderInsuredRelation\\\":\\\"03\\\"}],\\\"policy\\\":{\\\"agencyPolicyRef\\\":\\\"ALCZYXAA201900000005\\\",\\\"expireDate\\\":\\\"20200924235959\\\",\\\"groupSize\\\":1,\\\"issueDate\\\":\\\"20190924161544\\\",\\\"effectiveDate\\\":\\\"20190925000000\\\",\\\"planCode\\\":\\\"CZYXAAP1\\\",\\\"premiumCalType\\\":\\\"1\\\"},\\\"policyHolder\\\":{\\\"policyHolderType\\\":\\\"I\\\",\\\"pHEmail\\\":\\\"123@qq.com\\\",\\\"pHIdType\\\":\\\"3\\\",\\\"pHAddress\\\":\\\"123\\\",\\\"pHTelephone\\\":\\\"13800138000\\\",\\\"policyHolderName\\\":\\\"测试\\\",\\\"pHBirthDate\\\":\\\"20010924000000\\\",\\\"pHIdNumber\\\":\\\"145464564\\\"}},\\\"commonResponseConfirm\\\":{\\\"agencyPolicyRef\\\":\\\"ALCZYXAA201900000005\\\",\\\"insuredPremiumList\\\":[],\\\"policyRef\\\":\\\"101-1-520-19-0000000264-00\\\",\\\"policyStatus\\\":\\\"60\\\",\\\"totalPremium\\\":\\\"3500\\\"}}\",\"insured\":{\"idType\":\"\"},\"insuredAge\":\"0\",\"insuredDayNum\":\"366\",\"insuredInfoSaveFlag\":\"\",\"partnerCode\":\"AC600001\",\"personInfoSaveFlag\":\"\",\"planCode\":\"CZYXAAP1\",\"policy\":{},\"premiumPrice\":\"2970\",\"productCode\":\"CZYXAA\",\"productName\":\"成长优享安联未成年人门急诊保障计划\",\"quoteJson\":\"{\\\"productCode\\\":\\\"CZYXAA\\\",\\\"planName\\\":\\\"成长优享-安联未成年人门急诊保障成长计划\\\",\\\"planGroupName\\\":\\\"成长计划\\\",\\\"planCode\\\":\\\"CZYXAAP1\\\",\\\"price\\\":\\\"2970.00\\\",\\\"itemKind\\\":[{\\\"riskCode\\\":\\\"520\\\",\\\"clauseCode\\\":\\\"5940000002015\\\",\\\"clauseCName\\\":\\\"未成年人门急诊医疗费用\\\",\\\"kindName\\\":\\\"\\\",\\\"kindCode\\\":\\\"\\\",\\\"amount\\\":100000,\\\"clauseAttribute\\\":\\\"1\\\",\\\"remark\\\":\\\"（不含中医门急诊医疗）\\\",\\\"unitDisplay\\\":\\\"元\\\"},{\\\"riskCode\\\":\\\"520\\\",\\\"clauseCode\\\":\\\"5940000002016\\\",\\\"clauseCName\\\":\\\"医疗费用赔付比例\\\",\\\"kindName\\\":\\\"\\\",\\\"kindCode\\\":\\\"\\\",\\\"amount\\\":0,\\\"clauseAttribute\\\":\\\"1\\\",\\\"remark\\\":\\\"（前5次就诊100%赔付，其后50%赔付）\\\",\\\"unitDisplay\\\":\\\"元\\\"},{\\\"riskCode\\\":\\\"520\\\",\\\"clauseCode\\\":\\\"5940000002017\\\",\\\"clauseCName\\\":\\\"体检\\\",\\\"kindName\\\":\\\"\\\",\\\"kindCode\\\":\\\"\\\",\\\"amount\\\":0,\\\"clauseAttribute\\\":\\\"1\\\",\\\"remark\\\":\\\"（查体+血常规+尿常规）\\\",\\\"unitDisplay\\\":\\\"元\\\"},{\\\"riskCode\\\":\\\"520\\\",\\\"clauseCode\\\":\\\"5940000002018\\\",\\\"clauseCName\\\":\\\"儿童齿科检查\\\",\\\"kindName\\\":\\\"\\\",\\\"kindCode\\\":\\\"\\\",\\\"amount\\\":0,\\\"clauseAttribute\\\":\\\"1\\\",\\\"remark\\\":\\\"1次儿童齿科检查+窝沟封闭（2颗）或涂氟1次\\\",\\\"unitDisplay\\\":\\\"元\\\"},{\\\"riskCode\\\":\\\"520\\\",\\\"clauseCode\\\":\\\"5940000002019\\\",\\\"clauseCName\\\":\\\"儿童健康讲座\\\",\\\"kindName\\\":\\\"\\\",\\\"kindCode\\\":\\\"\\\",\\\"amount\\\":0,\\\"clauseAttribute\\\":\\\"1\\\",\\\"remark\\\":\\\"（6次儿童健康讲座）\\\",\\\"unitDisplay\\\":\\\"元\\\"},{\\\"riskCode\\\":\\\"520\\\",\\\"clauseCode\\\":\\\"5940000002020\\\",\\\"clauseCName\\\":\\\"健康文章推送\\\",\\\"kindName\\\":\\\"\\\",\\\"kindCode\\\":\\\"\\\",\\\"amount\\\":0,\\\"clauseAttribute\\\":\\\"1\\\",\\\"remark\\\":\\\"（12篇个性化的健康资讯）\\\",\\\"unitDisplay\\\":\\\"元\\\"},{\\\"riskCode\\\":\\\"520\\\",\\\"clauseCode\\\":\\\"5940000002021\\\",\\\"clauseCName\\\":\\\"公立医院住院绿色就医通道\\\",\\\"kindName\\\":\\\"\\\",\\\"kindCode\\\":\\\"\\\",\\\"amount\\\":0,\\\"clauseAttribute\\\":\\\"1\\\",\\\"remark\\\":\\\"含（医疗费用客户自付）\\\",\\\"unitDisplay\\\":\\\"元\\\"},{\\\"riskCode\\\":\\\"520\\\",\\\"clauseCode\\\":\\\"5940000002022\\\",\\\"clauseCName\\\":\\\"儿科疾病线上问诊\\\",\\\"kindName\\\":\\\"\\\",\\\"kindCode\\\":\\\"\\\",\\\"amount\\\":0,\\\"clauseAttribute\\\":\\\"1\\\",\\\"remark\\\":\\\"（全年12次线上问诊）\\\",\\\"unitDisplay\\\":\\\"元\\\"},{\\\"riskCode\\\":\\\"520\\\",\\\"clauseCode\\\":\\\"5940000002023\\\",\\\"clauseCName\\\":\\\"送药上门\\\",\\\"kindName\\\":\\\"\\\",\\\"kindCode\\\":\\\"\\\",\\\"amount\\\":0,\\\"clauseAttribute\\\":\\\"1\\\",\\\"remark\\\":\\\"（经过线上问诊，可将所需药品送到客户家中，免除额外配药手续（药费客户自付））\\\",\\\"unitDisplay\\\":\\\"元\\\"}],\\\"insuredDayNum\\\":366,\\\"sex\\\":\\\"\\\",\\\"insuredAge\\\":\\\"0\\\",\\\"quoteFactor1\\\":\\\"\\\",\\\"quoteFactor2\\\":\\\"\\\",\\\"quoteFactor3\\\":\\\"\\\",\\\"quoteFactor4\\\":\\\"\\\",\\\"quoteFactor5\\\":\\\"\\\",\\\"insuredPrice\\\":\\\"\\\",\\\"quoteJson\\\":\\\"\\\",\\\"partnerCode\\\":\\\"AC600001\\\",\\\"sid\\\":\\\"AC600001\\\",\\\"dayLimit\\\":{\\\"dayTo\\\":\\\"366\\\",\\\"name\\\":\\\"全年保障\\\",\\\"dayFrom\\\":\\\"365\\\"},\\\"ageLimit\\\":{\\\"name\\\":\\\"0岁\\\",\\\"ageFrom\\\":\\\"0\\\",\\\"ageTo\\\":\\\"0\\\"},\\\"Policy\\\":{\\\"EffectiveDate\\\":\\\"2019-09-25\\\",\\\"ExpireDate\\\":\\\"2020-09-24\\\",\\\"BirthDate\\\":\\\"2012-01-24\\\"},\\\"Policy.EffectiveDate\\\":\\\"\\\",\\\"Policy.ExpireDate\\\":\\\"2020-09-24\\\",\\\"Policy.BirthDate\\\":\\\"2012-01-24\\\"}\",\"sid\":\"AC600001\"}";
+        JSONObject jsonObject = JSONObject.parseObject(str);
+        JSONObject jsonObject1 = JSONObject.parseObject(jsonObject.get("insureJson").toString());
+        JSONObject jsonObject2 = JSONObject.parseObject(jsonObject1.get("accidentInsuranceReqVo").toString());
+        JSONArray jsonObject3 = JSONObject.parseArray(jsonObject2.get("insuredList").toString());
+        jsonObject3.forEach(e->{
+            JSONObject i = (JSONObject)e;
+            System.out.println(i.get("idType").toString());
+        });
+    }
+
+}

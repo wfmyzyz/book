@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wfmyzyz.book.mapper.BookMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.wfmyzyz.book.domain.Book">
+        <id column="book_id" property="bookId" />
+        <result column="name" property="name" />
+        <result column="head_image" property="headImage" />
+        <result column="introduce" property="introduce" />
+        <result column="explain" property="explain" />
+        <result column="author" property="author" />
+        <result column="publiser" property="publiser" />
+        <result column="browse" property="browse" />
+        <result column="praise" property="praise" />
+        <result column="check" property="check" />
+        <result column="type" property="type" />
+        <result column="upload_url" property="uploadUrl" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="tb_status" property="tbStatus" />
+    </resultMap>
+
+</mapper>
