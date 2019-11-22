@@ -86,6 +86,16 @@ public class Book implements Serializable {
     private String uploadUrl;
 
     /**
+     * 书籍状态
+     */
+    private String bookStatus;
+
+    /**
+     * 书籍状态
+     */
+    private Integer serialNum;
+
+    /**
      * 创建时间
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -201,6 +211,22 @@ public class Book implements Serializable {
         this.uploadUrl = uploadUrl;
     }
 
+    public String getBookStatus() {
+        return bookStatus;
+    }
+
+    public void setBookStatus(String bookStatus) {
+        this.bookStatus = bookStatus;
+    }
+
+    public Integer getSerialNum() {
+        return serialNum;
+    }
+
+    public void setSerialNum(Integer serialNum) {
+        this.serialNum = serialNum;
+    }
+
     public LocalDateTime getCreateTime() {
         return createTime;
     }
@@ -240,6 +266,8 @@ public class Book implements Serializable {
         ", bookCheck=" + bookCheck +
         ", bookType=" + bookType +
         ", uploadUrl=" + uploadUrl +
+        ", bookStatus=" + bookStatus +
+        ", serialNum=" + serialNum +
         ", createTime=" + createTime +
         ", updateTime=" + updateTime +
         ", tbStatus=" + tbStatus +

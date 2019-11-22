@@ -4,7 +4,6 @@ package com.wfmyzyz.book.controller.back.administrators.label;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sun.org.apache.bcel.internal.generic.LADD;
 import com.wfmyzyz.book.domain.AdminRole;
 import com.wfmyzyz.book.domain.BookLabel;
 import com.wfmyzyz.book.domain.Label;

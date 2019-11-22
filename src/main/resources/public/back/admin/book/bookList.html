@@ -10,6 +10,11 @@
     <script src="../../../back/layuiadmin/layui/layui.js"></script>
     <script src="../../../back/jquery/jquery-3.4.1.js"></script>
     <script src="../../../back/config.js"></script>
+    <style>
+        .layui-table img{
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
 <div class="layui-fluid">
@@ -77,7 +82,20 @@
                 ,{field: 'praise', title: '点赞人数',align: "center"}
                 ,{field: 'author', title: '作者',align: "center"}
                 ,{field: 'publiser', title: '发布人',align: "center"}
-                ,{field: 'bookType', title: '书籍类型',align: "center"}
+                ,{
+                    title: '书籍类型',align: "center",width: 180,templet: function (d) {
+                        if (d.bookType === "章回"){
+                            return d.bookType + "<buttom style='margin-left: 5px' data-id='"+d.bookId+"' data-name='"+d.name+"' class='layui-btn layui-btn-normal layui-btn-xs serial-add-btn'>写章回</buttom>"+
+                                    "<buttom style='margin-left: 5px' data-id='"+d.bookId+"' data-name='"+d.name+"' class='layui-btn layui-btn-warm layui-btn-xs serial-list-btn'>章回列表</buttom>"
+                        }else {
+                            return d.bookType;
+                        }
+                    }
+                }
+                ,{field: 'serialNum', title: '书籍章回数',align: "center"}
+                ,{title: '书籍状态',align: "center",templet: function (d) {
+                        return d.bookStatus + '<buttom data-id="'+d.bookId+'" style="margin-left: 5px" class="layui-btn layui-btn-xs download-btn">下载</buttom>';
+                    }}
                 ,{field: 'createTime', title: '创建时间',align: "center"}
                 ,{field: 'updateTime', title: '更改时间',align: "center"}
                 ,{field: 'tbStatus', title: '状态',align: "center"}
@@ -104,7 +122,7 @@
                     shadeClose: true,
                     shade: 0.8,
 //                         area: ['10%', '9%'],
-                    content:  "<img src='"+data.headImage+"' style='width:100%;' />"
+                    content:  "<img src='"+data.headImage+"' style='width:100%;height: 100%' />"
                 });
             }
         });
@@ -133,6 +151,12 @@
         })
         $(document).on("click",".update-article",function () {
             window.parent.layui.index.openTabsPage('book/addBook.html?bookId='+$(this).attr("data-id"), '修改书籍-书籍ID：'+$(this).attr("data-id"));
+        })
+        $(document).on("click",".serial-list-btn",function () {
+            window.parent.layui.index.openTabsPage('book/serialList.html?bookId='+$(this).attr("data-id")+"&bookName="+encodeURI($(this).attr("data-name")), '章回列表-书籍ID：'+$(this).attr("data-id"));
+        })
+        $(document).on("click",".serial-add-btn",function () {
+            window.parent.layui.index.openTabsPage('book/addSerial.html?bookId='+$(this).attr("data-id"), '添加章回-书籍ID：'+$(this).attr("data-id"));
         })
         $(document).on("click",".remove-article",function () {
             var indexId = $(this).attr("data-id");
@@ -189,6 +213,9 @@
                     layer.close(index);
                 })
             }
+        })
+        $(document).on("click",".download-btn",function () {
+            window.location.href = backRoot + "/download/book/"+$(this).attr("data-id");
         })
     });
 

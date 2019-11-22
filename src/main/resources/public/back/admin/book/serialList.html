@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>章回列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../back/layuiadmin/layui/css/layui.css" media="all">
+    <script src="../../../back/layuiadmin/layui/layui.js"></script>
+    <script src="../../../back/jquery/jquery-3.4.1.js"></script>
+    <script src="../../../back/config.js"></script>
+    <style>
+        .book-name{
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="layui-fluid">
+        <div id="head" style="margin-top: 10px">
+            <h2 class="book-name"></h2>
+            <button class="layui-btn add-label">添加章回</button>
+            <button class="layui-btn layui-btn-danger remove-article-btn" style="margin-right: 20px">删除章回</button>
+            <div class="layui-inline">
+                <div class="layui-inline">
+                    <label class="layui-form-label">章回ID</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="search-id"  placeholder="请输入章回ID" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">章回名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="search-name" placeholder="请输入章回名" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">开始</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="search-start-time"   class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">结束</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="search-end-time"   class="layui-input">
+                    </div>
+                </div>
+                <button class="layui-btn search-label layui-btn-warm">搜索</button>
+                <button class="layui-btn search-back layui-btn-normal">返回</button>
+            </div>
+            <table id="table" lay-filter="table"></table>
+        </div>
+    </div>
+    <script>
+        layui.use(['table','laydate','form'], function() {
+            var table = layui.table;
+            var laydate = layui.laydate;
+            var form = layui.form;
+            laydate.render({
+                elem: '#search-start-time' //指定元素
+                ,type: "datetime"
+            });
+            laydate.render({
+                elem: '#search-end-time' //指定元素
+                ,type: "datetime"
+            });
+            var tableIns =table.render({
+                elem: '#table'
+                ,url: '/back/admin/book/bookSerial/getSerialList?bookId='+GetQueryString("bookId") //数据接口
+                ,page: true //开启分页
+                ,cols: [[ //表头
+                    {checkbox: true}
+                    ,{field: 'serialId', title: 'ID', sort: true,align: "center"}
+                    ,{field: 'serialNum', title: '章回数', sort: true,align: "center"}
+                    ,{field: 'title', title: '章回名',align: "center"}
+                    ,{field: 'browse', title: '浏览人数',align: "center"}
+                    ,{title: '审核状态',align: "center",templet: function (d) {
+                            if (d.serialCheck == "通过"){
+                                return '<div><input type="checkbox" name="check" value="'+d.serialId+'" lay-skin="switch" lay-filter="serialCheck" checked lay-text="通过|未通过"></div>';
+                            }else {
+                                return '<div><input type="checkbox" name="check" value="'+d.serialId+'" lay-skin="switch" lay-filter="serialCheck" lay-text="通过|未通过"></div>';
+                            }
+                        }
+                    }
+                    ,{field: 'createTime', title: '创建时间',align: "center"}
+                    ,{field: 'updateTime', title: '更新时间',align: "center"}
+                    ,{field: 'tbStatus', title: '状态',align: "center"}
+                    ,{
+                        title: '操作', align: "center", templet: function (d) {
+                            return '<div><buttom data-id="'+d.serialId+'"  class="layui-btn layui-btn-xs update-serial">编辑</buttom><buttom data-id="'+d.serialId+'" class="remove-serial layui-btn layui-btn-xs layui-btn-danger">删除</buttom></div>';
+                        }
+                    }
+                ]]
+            });
+            $(document).on("click",".search-label",function () {
+                tableIns.reload({
+                    where: { //设定异步数据接口的额外参数，任意设
+                        serialId: $("#search-id").val()
+                        ,title: $("#search-name").val()
+                        ,startTime: $("#search-start-time").val()
+                        ,endTime: $("#search-end-time").val()
+                    }
+                })
+            })
+            $(document).on("click",".search-back",function () {
+                tableIns.reload({
+                    where: { //设定异步数据接口的额外参数，任意设
+                        serialId: ""
+                        ,title: ""
+                        ,startTime: ""
+                        ,endTime: ""
+                    }
+                })
+            })
+            $(document).on("click",".update-serial",function () {
+                window.parent.layui.index.openTabsPage('book/addSerial.html?serialId='+$(this).attr("data-id")+'&type=update', '修改章回-书籍ID：'+GetQueryString("bookId"));
+            })
+            $(document).on("click",".remove-serial",function () {
+                var indexId = $(this).attr("data-id");
+                layer.confirm('是否删除该章回?', function(index){
+                    layer.load();
+                    $.ajax({
+                        type: "get",
+                        url: backRoot + "/back/admin/book/bookSerial/remove/"+indexId,
+                        success: function (result) {
+                            layer.closeAll("loading");
+                            if(result.code == 200){
+                                layer.alert(result.map.data);
+                                tableIns.reload({
+                                    page:{
+                                        curr:1
+                                    }
+                                });
+                                return false;
+                            }
+                            layer.alert(result.map.error);
+                        }
+                    })
+                    layer.close(index);
+                });
+            })
+            $(document).on("click",".remove-article-btn",function () {
+                var checkStatus = table.checkStatus('table');
+                if (checkStatus.data.length > 0) {
+                    layer.confirm('是否删除选中的书籍?', function(index){
+                        layer.load();
+                        var arr = [];
+                        for(var i = 0;i<checkStatus.data.length;i++){
+                            arr.push(checkStatus.data[i]);
+                        }
+                        $.ajax({
+                            type: "post",
+                            url: backRoot + "/back/admin/book/bookSerial/remove",
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify(arr),
+                            success: function (result) {
+                                layer.closeAll("loading");
+                                if (result.code == 200) {
+                                    layer.alert("删除成功！");
+                                    tableIns.reload({
+                                        page:{
+                                            curr:1
+                                        }
+                                    });
+                                    return false;
+                                }
+                                layer.alert(result.map.error);
+                            }
+                        })
+                        layer.close(index);
+                    })
+                }
+            })
+            form.on('switch(serialCheck)', function(data){
+                $.ajax({
+                    url: backRoot + "/back/admin/book/bookSerial/updateSerialCheck/"+data.value,
+                    type: "get"
+                })
+            });
+        });
+        $(".add-label").click(function () {
+            window.parent.layui.index.openTabsPage('book/addSerial.html?bookId='+GetQueryString("bookId"), '添加章回-书籍ID：'+GetQueryString("bookId"));
+        })
+    </script>
+    <script>
+        $(".book-name").text("书籍名："+GetQueryString("bookName"));
+        function GetQueryString(name)
+        {
+            var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if(r!=null)return  decodeURI(r[2]); return null;
+        }
+    </script>
+</body>
+</html>

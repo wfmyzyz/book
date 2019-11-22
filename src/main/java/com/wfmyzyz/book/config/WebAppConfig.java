@@ -16,12 +16,20 @@ public class WebAppConfig implements WebMvcConfigurer {
         return new AdminLoginInterceptor();
     }
 
+    /**
+     * 允许跨域
+     * @param registry
+     */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**").allowCredentials(true).allowedHeaders("*").allowedOrigins("*").allowedMethods("*");
 
     }
 
+    /**
+     * 打开拦截器
+     * @param registry
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(adminLoginInterceptor()).addPathPatterns("/back/admin/**");

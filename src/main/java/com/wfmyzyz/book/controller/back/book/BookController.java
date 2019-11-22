@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wfmyzyz.book.domain.Book;
 import com.wfmyzyz.book.domain.BookLabel;
 import com.wfmyzyz.book.domain.Label;
+import com.wfmyzyz.book.domain.enums.BookEnum;
 import com.wfmyzyz.book.service.impl.BookLabelServiceImpl;
 import com.wfmyzyz.book.service.impl.BookServiceImpl;
 import com.wfmyzyz.book.utils.LayuiBackData;
@@ -45,7 +46,7 @@ public class BookController {
     private BookLabelServiceImpl bookLabelServiceImpl;
 
     /**
-     * 按分页条件获取博客
+     * 按分页条件获取书籍
      * @param page
      * @param limit
      * @param bookId
@@ -86,13 +87,20 @@ public class BookController {
         if (bindingResult.hasErrors()){
             return Msg.resultError(bindingResult);
         }
-        if (isBook(book.getName()) != null){
+        //书籍可重名
+        /*if (isBook(book.getName()) != null){
             return Msg.error().add("error","书籍名称已存在！");
-        }
+        }*/
         book.setPubliser("admin");
         if (StringUtils.isBlank(book.getAuthor())){
             book.setAuthor(book.getPubliser());
         }
+        if (Objects.equals(book.getBookType(), BookEnum.章回.toString())){
+            book.setBookStatus("连载");
+        }else {
+            book.setBookStatus("完结");
+        }
+        book.setSerialNum(0);
         boolean flag = bookServiceImpl.save(book);
         if (!flag){
             return Msg.error().add("error","书籍添加错误！");

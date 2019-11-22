@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author aa
@@ -110,4 +108,34 @@ public class UploadBookController {
         }
         return Msg.success().add("data","删除成功！");
     }
+
+    /**
+     * 章回上传图片
+     * @param files
+     * @return
+     */
+    @RequestMapping(value = "serial/uploadInto",method = RequestMethod.POST)
+    public Map<String,Object> uploadInto(@RequestParam("file") MultipartFile[] files){
+        Map<String,Object> map = new HashMap<>();
+        if (files.length == 0){
+            map.put("errno","1");
+            map.put("error","没有文件！");
+            return map;
+        }
+        List<String> urlList = new ArrayList<>();
+        for (MultipartFile file:files){
+            String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."),file.getOriginalFilename().length());
+            if (!suffix.toLowerCase().equals(".png")&&!suffix.toLowerCase().equals(".jpg")&&!suffix.toLowerCase().equals(".gif")&&!suffix.toLowerCase().equals(".svg")){
+                continue;
+            }
+            String flagName = fileTools.uploadFile(file,filePath+"/admin/serial/");
+            if (flagName != null){
+                urlList.add("/outimg/admin/serial/"+flagName);
+            }
+        }
+        map.put("errno",0);
+        map.put("data",urlList);
+        return map;
+    }
+
 }

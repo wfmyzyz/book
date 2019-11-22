@@ -69,7 +69,7 @@ public class AutoCodeBuild {
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         //表名
-        strategy.setInclude("book");
+        strategy.setInclude("book_serial");
         mpg.setStrategy(strategy);
         mpg.execute();
     }
