@@ -9,6 +9,7 @@ import com.wfmyzyz.book.domain.Book;
 import com.wfmyzyz.book.domain.BookLabel;
 import com.wfmyzyz.book.domain.BookSerial;
 import com.wfmyzyz.book.domain.enums.BookSerialCheckEnum;
+import com.wfmyzyz.book.domain.enums.BookStatusEnum;
 import com.wfmyzyz.book.service.IBookSerialService;
 import com.wfmyzyz.book.service.IBookService;
 import com.wfmyzyz.book.utils.LayuiBackData;
@@ -230,6 +231,27 @@ public class BookSerialController {
         updateWrapper.setSql("serial_num = serial_num-1");
         bookService.update(updateWrapper);
         return Msg.success().add("success","删除成功！");
+    }
+
+
+    /**
+     * 一键修改章回
+     * @param id
+     * @param flag
+     * @return
+     */
+    @PostMapping("updateBookSerialCheck")
+    public Msg updateBookSerialCheck(@RequestParam("id") Integer id,@RequestParam("flag") Boolean flag){
+        UpdateWrapper<BookSerial> serialUpdateWrapper = new UpdateWrapper<>();
+        if (flag){
+            serialUpdateWrapper.set("serial_check", BookSerialCheckEnum.通过.toString());
+        }else {
+            serialUpdateWrapper.set("serial_check", BookSerialCheckEnum.未通过.toString());
+        }
+        serialUpdateWrapper.eq("tb_status","正常");
+        serialUpdateWrapper.eq("book_id",id);
+        bookSerialService.update(serialUpdateWrapper);
+        return Msg.success();
     }
 
 }

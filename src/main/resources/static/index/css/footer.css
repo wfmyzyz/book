@@ -1,0 +1,12 @@
+footer .box{
+    margin-top: 20px;
+}
+footer .box .about{
+    text-align: center;
+}
+footer .box .about a{
+    color: #666;
+}
+footer .box .height{
+    height: 20px;
+}

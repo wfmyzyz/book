@@ -1,0 +1,87 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    background: #E1E0C7;
+}
+.clear{
+    clear: both;
+}
+header{
+    background: rgb(91,97,70);
+}
+.box{
+    width: 1200px;
+    margin: 0 auto;
+}
+header .box{
+    height: 45px;
+}
+header .box .left{
+    width: 145px;
+    float: left;
+}
+header .box .left a{
+    line-height: 45px;
+    font-size: 26px;
+    color: #F0EFE2;
+    font-weight: bold;
+}
+header .box .right{
+    width: 980px;
+    float: right;
+}
+header .box .right .nav{
+    width: 500px;
+    float: left;
+}
+header .box .right .nav ul{
+    height: 43px;
+    line-height: 43px;
+}
+header .box .right .nav ul li{
+    float: left;
+    padding: 0 20px;
+    color: #F0EFE2;
+    font-size: 16px;
+}
+header .box .right .nav ul .li-on{
+    background: #757863;
+    border-bottom: 2px solid #F0EFE2;
+}
+header .box .right .login{
+    float: right;
+    width: 80px;
+    height: 100%;
+    line-height: 45px;
+    margin: 0 20px;
+    text-align: center;
+}
+header .box .right .login span{
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: -5px;
+    color: #F0EFE2;
+}
+header .box .right .login a{
+    color: #F0EFE2;
+}
+header .box .right .search{
+    float: right;
+    width: 200px;
+    margin-top: 3px;
+}
+header .box .right .search input{
+    width: 160px;
+    float: left;
+}
+header .box .right .search .search-btn{
+    float: left;
+    width: 40px;
+    font-size: 26px;
+    color: #F0EFE2;
+    text-align: center;
+    line-height: 40px;
+    cursor: pointer;
+}

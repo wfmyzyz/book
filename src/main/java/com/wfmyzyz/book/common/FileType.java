@@ -5,7 +5,8 @@ public enum  FileType {
     PNG("png"),
     SVG("svg"),
     GIF("gif"),
-    PDF("pdf");
+    PDF("pdf"),
+    TXT("txt");
 
     FileType(String type) {
         this.type = type;

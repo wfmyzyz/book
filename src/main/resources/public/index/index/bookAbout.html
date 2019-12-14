@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>网络书库-书籍</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../back/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../back/layuiadmin/style/admin.css" media="all">
+    <script src="../../../back/layuiadmin/layui/layui.js"></script>
+    <script src="../../../back/jquery/jquery-3.4.1.js"></script>
+    <script src="../../../back/config.js"></script>
+    <link href="../../../index/css/header.css" rel="stylesheet">
+    <link href="../../../index/css/footer.css" rel="stylesheet">
+    <style>
+        b,strong{
+            font-weight: normal;
+            font-style: normal;
+        }
+        section .box{
+            margin-top: 50px;
+        }
+        section .box .book{
+            width: 990px;
+            margin: 100px auto 0px;
+            padding: 20px;
+            background: #E1E0DC;
+        }
+        section .box .book img{
+            width: 150px;
+            height: 200px;
+            box-shadow: 0 1px 10px rgba(0,0,0,.35), 0 0 5px #f9f2e9 inset;
+            float: left;
+        }
+        section .box .book .about{
+            width: 800px;
+            height: 200px;
+            float: right;
+        }
+        section .box .book .about .title .name{
+            font-size: 26px;
+            font-weight: bold;
+            color: #333;
+        }
+        section .box .book .about .title .author{
+            color: #333;
+            margin-left: 20px;
+            margin-right: 5px;
+        }
+        section .box .book .about .label span{
+            display: inline-block;
+            padding: 1px 5px;
+            border: 1px solid #999;
+            margin: 5px 5px 5px 0px;
+            border-radius: 10px;
+            color: #666;
+        }
+        section .box .book .about .label span:hover{
+            background: #efefef;
+        }
+        section .box .book .about .explain{
+            height: 60px;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+        }
+        section .box .book .about .record{
+            font-size: 18px;
+        }
+        section .box .book .about .record .split{
+            display: inline-block;
+            vertical-align: middle;
+            margin-top: -5px;
+        }
+        section .box .book .about .record .praise-icon{
+            margin:0 3px;
+        }
+        section .box .book .about .record .praise-icon:hover{
+            color: #be2c23;
+            cursor: pointer;
+        }
+        section .box .book .about .book-action{
+            margin-top: 15px;
+        }
+        section .box .book .about .book-action .action-btn{
+            font-size: 16px;
+            padding: 5px 8px;
+            margin-right: 8px;
+            cursor: pointer;
+            border: 1px solid #666;
+            border-radius: 10px;
+        }
+        section .box .book .about .book-action .action-btn:hover{
+            background: #eee;
+        }
+        section .box .book-message{
+            margin-top: 80px;
+        }
+        section .box .book-message .catalog .one-catalog{
+            display: inline-block;
+            margin: 10px 20px;
+            width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap
+        }
+    </style>
+</head>
+<body>
+    <header>
+    <div class="box">
+        <div class="left">
+            <a href="#">网络书库</a>
+        </div>
+        <div class="right">
+            <div class="nav">
+                <ul>
+                    <a href="/index/index.html"><li class="li-on">首页</li></a>
+                    <a href="/index/ranking/index.html"><li>排行</li></a>
+                    <a href="/index/bookStock/index.html"><li>书库</li></a>
+                </ul>
+            </div>
+            <div class="login">
+                <a href="#">注册</a>
+                <span>|</span>
+                <a href="#">登录</a>
+            </div>
+            <div class="search">
+                <input type="text" name="name" placeholder="请输入…" autocomplete="off" class="layui-input">
+                <span class="search-btn layui-icon-search layui-icon"></span>
+            </div>
+        </div>
+    </div>
+</header>
+    <section>
+        <div class="box">
+            <div class="nav">
+                <span class="layui-breadcrumb">
+                  <a href="/index/index.html">首页</a>
+                  <a><cite>书籍详情</cite></a>
+                </span>
+            </div>
+            <div class="book">
+                <img id="book-img" src="../../../back/login/images/bg.jpg" alt="">
+                <div class="about">
+                    <div class="title"><span class="name" id="book-name">测试书籍</span><span class="author" id="book-author">测试人</span>著</div>
+                    <div class="label" id="book-label">
+                        <a href="#"><span>测试标签1</span></a>
+                        <a href="#"><span>测试标签2</span></a>
+                    </div>
+                    <div class="explain" id="book-explain"></div>
+                    <div class="record">
+                        <span class="browse"><b id="book-browse"></b>人浏览</span> <span class="split">|</span>
+                        <span class="praise"><b id="book-praise"></b>人点赞<strong id="praise" class="layui-icon layui-icon-praise praise-icon" data-is="false"></strong></span>
+                    </div>
+                    <div class="book-action">
+                        <span class="ready-btn action-btn">在线阅读</span>
+                        <span class="download-btn action-btn">下载书籍</span>
+                        <span class="collection-btn action-btn">加入收藏</span>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="book-message">
+                <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">作品信息</li>
+                        <li>目录</li>
+                    </ul>
+                    <div class="layui-tab-content" style="margin-top: 20px">
+                        <div class="layui-tab-item layui-show">
+                            <p class="introduction" id="book-introduction">这是真滴</p>
+                        </div>
+                        <div class="layui-tab-item">
+                            <div class="catalog" id="catalog">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="box">
+            <hr class="layui-bg-gray">
+            <div class="about">
+                <span>© 2019 <a href="#">网络书库</a> 邮件：44444444@test.org</span>
+            </div>
+            <div class="height"></div>
+        </div>
+    </footer>
+    <script>
+        layui.use(['form','element','flow'], function(){
+            var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+            var flow = layui.flow;
+            flow.load({
+                elem: '#catalog' //指定列表容器
+                ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+                    var lis = [];
+                    //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                    $.get('/index/bookSerialList/'+GetQueryString("bookId")+'?page='+page+"&limit=200", function(res){
+                        //假设你的列表返回在data集合中
+                        layui.each(res.map.data.records, function(index, item){
+                            lis.push('<a data-id="'+item.serialId+'" href="bookSerial.html?bookId='+GetQueryString("bookId")+'&serialId='+item.serialId+'" target="_blank"><span class="one-catalog">第<b>'+item.serialNum+'</b>章 <strong class="name">'+item.title+'</strong></span></a>')
+                        });
+
+                        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                        //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                        next(lis.join(''), page < res.map.data.pages);
+                    });
+                }
+            });
+        });
+        $(".ready-btn").click(function () {
+            if ($(this).attr("data-type") === "pdf"){
+                window.open($(this).attr("data-url"));
+            }else {
+                window.open('bookSerial.html?bookId='+GetQueryString("bookId")+'&serialId='+$("#catalog").find("a").eq(0).attr("data-id"));
+            }
+        })
+        $(".download-btn").click(function () {
+            window.open("/download/book/"+GetQueryString("bookId"));
+        })
+        $("#praise").click(function () {
+            if($(this).attr("data-is") == "true"){
+                $(this).css("color","RGB(102,102,102)");
+                $(this).attr("data-is","false");
+                layer.tips('取消点赞', '#praise', {
+                    time: 500,
+                    tips: [1,"#666"]
+                });
+                $("#book-praise").text(parseInt($("#book-praise").text())-1);
+            }else {
+                $(this).css("color","RGB(190,44,35)");
+                $(this).attr("data-is","true");
+                layer.tips('点赞成功', '#praise', {
+                    time: 500,
+                    tips: [1,"#666"]
+                });
+                $("#book-praise").text(parseInt($("#book-praise").text())+1);
+            }
+        })
+    </script>
+    <script>
+        $.ajax({
+            type: "get",
+            url: backRoot + "/index/getBook/"+GetQueryString("bookId"),
+            success: function (result) {
+                console.log(result)
+                var book = result.map.data.book;
+                $("#book-img").attr("src",book.headImage);
+                $("#book-name").text(book.name);
+                $("#book-author").text(book.author);
+                $("#book-explain").text(book.bookExplain);
+                $("#book-praise").text(book.praise);
+                $("#book-browse").text(book.browse);
+                $("#book-introduction").text(book.introduce);
+                var txt = "";
+                for (var i=0;i<result.map.data.labelList.length;i++){
+                    txt += '<a href="/index/bookStock/index.html?label='+result.map.data.labelList[i].name+'" target="_blank"><span>'+result.map.data.labelList[i].name+'</span></a>';
+                }
+                $("#book-label").html(txt)
+                if (book.bookType === "pdf"){
+                    $(".ready-btn").attr("data-type","pdf")
+                    $(".ready-btn").attr("data-url",book.uploadUrl)
+                }else {
+                    $(".ready-btn").attr("data-type","章回")
+                }
+            }
+        })
+        function GetQueryString(name)
+        {
+            var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if(r!=null)return  decodeURI(r[2]); return null;
+        }
+    </script>
+</body>
+</html>

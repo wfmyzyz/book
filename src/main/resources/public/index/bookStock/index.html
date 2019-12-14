@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>网络图书</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../back/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../back/layuiadmin/style/admin.css" media="all">
+    <script src="../../../back/layuiadmin/layui/layui.js"></script>
+    <script src="../../../back/jquery/jquery-3.4.1.js"></script>
+    <script src="../../../back/config.js"></script>
+    <link href="../../../index/css/header.css" rel="stylesheet">
+    <link href="../../../index/css/footer.css" rel="stylesheet">
+    <style>
+        i,strong{
+            font-style: normal;
+            font-weight: normal;
+        }
+        .clear{
+            clear: both;
+        }
+        section .box{
+            margin-top: 50px;
+        }
+        section .box .search-box{
+            margin-top: 50px;
+            border: 1px solid #C8C7BC;
+            border-radius: 5px;
+            background: #F0EFE2;
+            padding: 10px 20px 20px 20px;
+        }
+        section .box .search-box h1{
+            border-bottom: 1px solid #DAD9D1;
+            padding-bottom: 10px;
+            font-weight: bold;
+        }
+        section .box .search-box .type{
+            margin-top: 20px;
+        }
+        section .box .search-box .type .type-list i{
+            margin: 0 8px;
+            color: #333;
+            cursor: pointer;
+        }
+        section .box .search-box .type .type-list i:hover{
+            color: #666;
+        }
+        section .box .search-box .search-label-box{
+            margin-top: 10px;
+        }
+        section .box .search-box .search-label-box .search-label-list i{
+            display: inline-block;
+            border: 1px solid #999;
+            font-size: 12px;
+            padding: 0 3px;
+            border-radius: 4px;
+            background: #fff;
+            position: relative;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        section .box .search-box .search-label-box .search-label-list i .label-close{
+            display: none;
+            width: 100%;
+            height: 100%;
+            font-size: 12px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            font-weight: bold;
+            text-align: right;
+            line-height: 18px;
+            color: #000;
+            background: rgba(102,102,102,0.8);
+        }
+        section .box .search-box .search-label-box .search-label-list i:hover .label-close{
+            display: inline-block;
+        }
+        section .box .book-list{
+            margin-top: 100px;
+            width: 900px;
+            float: left;
+        }
+        section .box .book-list .book-box{
+            width: 400px;
+            height: 144px;
+            margin: 20px 14px;
+            float: left;
+            border: 1px solid #ccc;
+            padding: 2px;
+            border-radius: 5px;
+            box-shadow: 0 1px 10px rgba(0,0,0,.35), 0 0 5px #f9f2e9 inset;
+        }
+        section .box .book-list .book-box .book-img{
+            width: 100px;
+            margin-top: 2px;
+            height: 136px;
+            float: left;
+            border-radius: 5px;
+            border:1px solid #ccc;
+            padding: 2px;
+        }
+        section .box .book-list .book-box .book-img img{
+            width: 100%;
+            height: 100%;
+            border-radius: 5px;
+            transition: all 0.3s linear;
+        }
+        section .box .book-list .book-box img:hover{
+            transform: scale(1.05,1.05);
+        }
+        section .box .book-list .book-box .book-about{
+            width: 280px;
+            float: right;
+            padding: 5px;
+        }
+        section .box .book-list .book-box .book-about .name{
+            font-size: 16px;
+            font-weight: bold;
+        }
+        section .box .book-list .book-box .book-about .name a:hover{
+            color: #e84848;
+        }
+        section .box .book-list .book-box .book-about .introduction{
+            font-size: 14px;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+            height: 78px;
+        }
+        section .box .book-list .book-box .book-about .book-author-type .author{
+            float: left;
+            color: #666;
+        }
+        section .box .book-list .book-box .book-about .book-author-type .author:hover{
+            color: #e84848;
+        }
+        section .box .book-list .book-box .book-about .book-author-type .type-box{
+            float: right;
+        }
+        section .box .book-list .book-box .book-about .book-author-type .type-box .type{
+            font-size: 12px;
+            display: inline-block;
+            padding: 0 5px;
+            border: 1px solid #999;
+            color: #666;
+            margin: 0 2px;
+        }
+        section .box .book-list .book-box .book-about .book-author-type .type-box .type:hover{
+            border-color: #e84848;
+            color: #e84848;
+        }
+        section .box .book-ad{
+            width: 280px;
+            float: right;
+            margin-top: 100px;
+        }
+        section .box .book-ad .host-ul li{
+            margin: 8px 0;
+        }
+        section .box .curl-page{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+    <div class="box">
+        <div class="left">
+            <a href="#">网络书库</a>
+        </div>
+        <div class="right">
+            <div class="nav">
+                <ul>
+                    <a href="/index/index.html"><li>首页</li></a>
+                    <a href="/index/ranking/index.html"><li>排行</li></a>
+                    <a href="/index/bookStock/index.html"><li class="li-on">书库</li></a>
+                </ul>
+            </div>
+            <div class="login">
+                <a href="#">注册</a>
+                <span>|</span>
+                <a href="#">登录</a>
+            </div>
+            <div class="search">
+                <input type="text" name="name" placeholder="请输入…" autocomplete="off" class="layui-input">
+                <span class="search-btn layui-icon-search layui-icon"></span>
+            </div>
+        </div>
+    </div>
+</header>
+    <section>
+        <div class="box">
+            <div class="nav">
+                <span class="layui-breadcrumb">
+                  <a href="/index/index.html">首页</a>
+                  <a><cite>搜索列表</cite></a>
+                </span>
+            </div>
+            <div class="search-box">
+                <h1>分类</h1>
+                <div class="type">
+                    <span>类型：</span><span class="type-list" id="type-list"></span>
+                </div>
+                <div class="search-label-box">
+                    <span>筛选：</span>
+                    <span class="search-label-list"></span>
+                </div>
+            </div>
+            <div class="book-list">
+                <div class="layui-card">
+                    <div class="layui-card-header">搜索内容</div>
+                    <div class="layui-card-body host-card">
+                        <div class="book-box">
+                            <div class="book-img"><a href="index/bookAbout.html?bookId='+result.map.data.host[i].bookId+'"><img src="/back/login/images/bg.jpg" alt="书籍图"></a></div>
+                            <div class="book-about">
+                                <span class="name"><a href="index/bookAbout.html?bookId='+result.map.data.host[i].bookId+'">测试</a></span>
+                                <p class="introduction">测试</p>
+                                <div class="book-author-type">
+                                    <a href="#"><span class="author">admin</span></a>
+                                    <div class="type-box">
+                                        <a href="#"><span class="type">测试</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="curl-page" id="curl-page"></div>
+                </div>
+            </div>
+            <div class="book-ad">
+                <div class="layui-card">
+                    <div class="layui-card-header">热门推荐</div>
+                    <div class="layui-card-body">
+                        <ul class="host-ul">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </section>
+    <footer>
+        <div class="box">
+            <hr class="layui-bg-gray">
+            <div class="about">
+                <span>© 2019 <a href="#">网络书库</a> 邮件：44444444@test.org</span>
+            </div>
+            <div class="height"></div>
+        </div>
+    </footer>
+    <script>
+        layui.use(['form','element','flow','laypage'], function(){
+            var laypage = layui.laypage;
+            $(document).on("click",".label",function () {
+                $(".search-label-list").append('<i class="search-label">'+$(this).text()+'<strong class="layui-icon layui-icon-close label-close"></strong></i>')
+                ajaxPage()
+            })
+            $(document).on("click",".search-label",function () {
+                $(this).remove()
+                ajaxPage()
+            })
+            if (GetQueryString("label") != null){
+                $(".search-label-list").append('<i class="search-label">'+GetQueryString("label")+'<strong class="layui-icon layui-icon-close label-close"></strong></i>')
+            }
+            ajaxPage()
+            function ajaxPage() {
+                let labelTxt = ''
+                for(var i = 0;i<  $(".search-label").length;i++){
+                    if (i == $(".search-label").length-1){
+                        labelTxt += $(".search-label").eq(i).text()
+                    }else {
+                        labelTxt += $(".search-label").eq(i).text() + ","
+                    }
+                }
+                $.ajax({
+                    type: "post",
+                    url: backRoot + "/api/book/getBookListByLabelList",
+                    data: {"labels":labelTxt,"page":1,"limit":10},
+                    success: function (result) {
+                        if (result.code == 0){
+                            xianShi(result)
+                            curlPage(10,result.count,labelTxt)
+                        }else {
+                            $(".host-card").html("暂无书籍！")
+                            curlPage(0,0,'')
+                        }
+                    }
+                })
+            }
+            function xianShi(result) {
+                var txt = ""
+                for(var i=0;i<result.data.length;i++){
+                    var labelTxt = '';
+                    if (result.data[i].labelList) {
+                        for (var j = 0; j < result.data[i].labelList.length; j++) {
+                            labelTxt += '<a target="_blank" href="index.html?label=' + result.data[i].labelList[j].name + '"><span class="type">' + result.data[i].labelList[j].name + '</span></a>'
+                        }
+                    }
+                    txt += '<div class="book-box">\n' +
+                        '                            <div class="book-img"><a target="_blank" href="/index/index/bookAbout.html?bookId='+result.data[i].bookId+'"><img src="'+result.data[i].headImage+'" alt="书籍图"></a></div>\n' +
+                        '                            <div class="book-about">\n' +
+                        '                                <span class="name"><a target="_blank" href="/index/index/bookAbout.html?bookId='+result.data[i].bookId+'">'+result.data[i].name+'</a></span>\n' +
+                        '                                <p class="introduction">'+result.data[i].bookExplain+'</p>\n' +
+                        '                                <div class="book-author-type">\n' +
+                        '                                    <a href="#"><span class="author">'+result.data[i].author+'</span></a>\n' +
+                        '                                    <div class="type-box">\n' + labelTxt+
+                        '                                    </div>\n' +
+                        '                                </div>\n' +
+                        '                            </div>\n' +
+                        '                            <div class="clear"></div>\n' +
+                        '                        </div>'
+                }
+                txt += '<div class="clear"></div>';
+                $(".host-card").html(txt);
+            }
+            function curlPage(limit,countSize,labelTxt) {
+                laypage.render({
+                    elem: 'curl-page' //注意，这里的 test1 是 ID，不用加 # 号
+                    ,count: countSize //数据总数，从服务端得到
+                    ,limit: limit
+                    ,jump: function (obj, first) {
+
+                        //首次不执行
+                        if(!first){
+                            //do something
+                            $.ajax({
+                                type: "post",
+                                url: backRoot + "/api/book/getBookListByLabelList",
+                                data: {"labels":labelTxt,"page":obj.curr,"limit":obj.limit},
+                                success: function (result) {
+                                    if (result.code == 0){
+                                        xianShi(result)
+                                    }else {
+                                        $(".host-card").html("暂无书籍！")
+                                    }
+                                }
+                            })
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+    <script>
+        $.ajax({
+            url: backRoot + "/api/label/getAllLabel",
+            type: "get",
+            success: function (result) {
+                var txt = ""
+                for(var i=0;i<result.map.data.length;i++){
+                    txt += '<i class="label">'+result.map.data[i].name+'</i>';
+                }
+                $("#type-list").html(txt)
+            }
+        })
+        $.ajax({
+            url: backRoot + "/index/list",
+            type: "get",
+            success: function (result) {
+                var txt = ""
+                for(var i=0;i<result.map.data.host.length;i++){
+                    txt += '<a href="/index/index/bookAbout.html?bookId='+result.map.data.host[i].bookId+'"><li>'+(i+1)+'.'+result.map.data.host[i].name+'</li></a>'
+                }
+                $(".host-ul").html(txt)
+            }
+        })
+        function GetQueryString(name)
+        {
+            var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if(r!=null)return  decodeURI(r[2]); return null;
+        }
+    </script>
+</body>
+</html>

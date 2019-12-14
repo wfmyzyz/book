@@ -7,8 +7,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wfmyzyz.book.domain.Book;
 import com.wfmyzyz.book.domain.BookLabel;
+import com.wfmyzyz.book.domain.BookSerial;
 import com.wfmyzyz.book.domain.Label;
+import com.wfmyzyz.book.domain.enums.BookCheckEnum;
 import com.wfmyzyz.book.domain.enums.BookEnum;
+import com.wfmyzyz.book.service.IBookSerialService;
 import com.wfmyzyz.book.service.impl.BookLabelServiceImpl;
 import com.wfmyzyz.book.service.impl.BookServiceImpl;
 import com.wfmyzyz.book.utils.LayuiBackData;
@@ -44,6 +47,8 @@ public class BookController {
     private BookServiceImpl bookServiceImpl;
     @Autowired
     private BookLabelServiceImpl bookLabelServiceImpl;
+    @Autowired
+    private IBookSerialService bookSerialService;
 
     /**
      * 按分页条件获取书籍
@@ -132,12 +137,12 @@ public class BookController {
         if (bindingResult.hasErrors()){
             return Msg.resultError(bindingResult);
         }
-        if (isBook(book.getName()) != null){
+        /*if (isBook(book.getName()) != null){
             Book repeatBook = isBook(book.getName());
             if (!Objects.equals(repeatBook.getBookId(),book.getBookId())){
                 return Msg.error().add("error","书籍名称已存在！");
             }
-        }
+        }*/
         boolean flag = bookServiceImpl.updateById(book);
         if (!flag){
             return Msg.error().add("error","修改失败！请重新修改");
@@ -183,7 +188,13 @@ public class BookController {
         for (BookLabel bookBindLabel:bookBindLabellist){
             deleteIdList.add(bookBindLabel.getBookLabelId());
         }
-        bookLabelServiceImpl.removeByIds(deleteIdList);
+        if (deleteIdList.size() > 0){
+            bookLabelServiceImpl.removeByIds(deleteIdList);
+        }
+        UpdateWrapper<BookSerial> serialUpdateWrapper = new UpdateWrapper<>();
+        serialUpdateWrapper.set("tb_status","删除");
+        serialUpdateWrapper.eq("book_id",id);
+        bookSerialService.update(serialUpdateWrapper);
         return Msg.success().add("success","删除成功！");
     }
 
@@ -202,6 +213,10 @@ public class BookController {
         boolean flag = bookServiceImpl.update(new UpdateWrapper<Book>().set("tb_status", "删除").in("book_id", bookIdList).eq("tb_status","正常"));
         if (flag){
             bookLabelServiceImpl.remove(new QueryWrapper<BookLabel>().in("book_id",bookIdList));
+            UpdateWrapper<BookSerial> serialUpdateWrapper = new UpdateWrapper<>();
+            serialUpdateWrapper.set("tb_status","删除");
+            serialUpdateWrapper.in("book_id",bookIdList);
+            bookSerialService.update(serialUpdateWrapper);
             return Msg.success().add("success","删除成功！");
         }
         return Msg.error().add("error","删除失败！请重新删除");
@@ -241,6 +256,26 @@ public class BookController {
     private Book isBook(String bookName) {
         Book book = bookServiceImpl.getOne(new QueryWrapper<Book>().eq("name",bookName).eq("tb_status","正常"));
         return book;
+    }
+
+    /**
+     * 修改书籍审核
+     * @param id
+     * @return
+     */
+    @GetMapping("updateBookCheck/{id}")
+    public Msg updateBookCheck(@PathVariable("id") Integer id){
+        Book book = bookServiceImpl.getById(id);
+        if (Objects.equals(book.getBookCheck(), BookCheckEnum.上架.toString())){
+            book.setBookCheck(BookCheckEnum.下架.toString());
+        }else {
+            book.setBookCheck(BookCheckEnum.上架.toString());
+        }
+        boolean flag = bookServiceImpl.updateById(book);
+        if (!flag){
+            return Msg.error().add("error","修改失败！");
+        }
+        return Msg.success().add("data","修改成功！");
     }
 
 }

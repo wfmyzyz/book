@@ -55,9 +55,10 @@
 <script>
     var finishPage;
     var indexPage;
-    layui.use(['table','laydate'], function(){
+    layui.use(['table','laydate','form'], function(){
         var table = layui.table;
         var laydate = layui.laydate;
+        var form = layui.form;
         laydate.render({
             elem: '#search-start-time' //指定元素
             ,type: "datetime"
@@ -96,6 +97,14 @@
                 ,{title: '书籍状态',align: "center",templet: function (d) {
                         return d.bookStatus + '<buttom data-id="'+d.bookId+'" style="margin-left: 5px" class="layui-btn layui-btn-xs download-btn">下载</buttom>';
                     }}
+                ,{title: '审核状态',align: "center",templet: function (d) {
+                        if (d.bookCheck == "上架"){
+                            return '<div><input type="checkbox" name="check" value="'+d.bookId+'" lay-skin="switch" lay-filter="bookCheck" checked lay-text="上架|下架"></div>';
+                        }else {
+                            return '<div><input type="checkbox" name="check" value="'+d.bookId+'" lay-skin="switch" lay-filter="bookCheck" lay-text="上架|下架"></div>';
+                        }
+                    }
+                }
                 ,{field: 'createTime', title: '创建时间',align: "center"}
                 ,{field: 'updateTime', title: '更改时间',align: "center"}
                 ,{field: 'tbStatus', title: '状态',align: "center"}
@@ -125,6 +134,12 @@
                     content:  "<img src='"+data.headImage+"' style='width:100%;height: 100%' />"
                 });
             }
+        });
+        form.on('switch(bookCheck)', function(data){
+            $.ajax({
+                url: backRoot + "/back/admin/book/book/updateBookCheck/"+data.value,
+                type: "get"
+            })
         });
         $(document).on("click",".search-label",function () {
             tableIns.reload({

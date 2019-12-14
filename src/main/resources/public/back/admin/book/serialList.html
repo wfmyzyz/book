@@ -23,7 +23,7 @@
             <h2 class="book-name"></h2>
             <button class="layui-btn add-label">添加章回</button>
             <button class="layui-btn layui-btn-danger remove-article-btn" style="margin-right: 20px">删除章回</button>
-            <div class="layui-inline">
+            <div class="layui-inline layui-form">
                 <div class="layui-inline">
                     <label class="layui-form-label">章回ID</label>
                     <div class="layui-input-inline">
@@ -50,6 +50,12 @@
                 </div>
                 <button class="layui-btn search-label layui-btn-warm">搜索</button>
                 <button class="layui-btn search-back layui-btn-normal">返回</button>
+                <div class="layui-inline">
+                    <label class="layui-form-label">一键审核</label>
+                    <div class="layui-input-inline">
+                        <input type="checkbox" id="one-check" name="one-check"  lay-skin="switch" lay-filter="oneCheck" lay-text="通过|未通过">
+                    </div>
+                </div>
             </div>
             <table id="table" lay-filter="table"></table>
         </div>
@@ -178,6 +184,16 @@
                 $.ajax({
                     url: backRoot + "/back/admin/book/bookSerial/updateSerialCheck/"+data.value,
                     type: "get"
+                })
+            });
+            form.on('switch(oneCheck)', function(data){
+                $.ajax({
+                    url: backRoot + "/back/admin/book/bookSerial/updateBookSerialCheck",
+                    type: "post",
+                    data: {id:GetQueryString("bookId"),flag:data.elem.checked},
+                    success: function (result) {
+                        tableIns.reload({})
+                    }
                 })
             });
         });

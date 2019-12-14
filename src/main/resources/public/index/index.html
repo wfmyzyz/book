@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>网络书库首页</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../back/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../back/layuiadmin/style/admin.css" media="all">
+    <script src="../../back/layuiadmin/layui/layui.js"></script>
+    <script src="../../back/jquery/jquery-3.4.1.js"></script>
+    <script src="../../back/config.js"></script>
+    <link href="../../index/css/header.css" rel="stylesheet">
+    <link href="../../index/css/footer.css" rel="stylesheet">
+    <style>
+        section #carousel{
+            margin-top: 50px;
+        }
+        section #carousel #carousel-div img{
+            width: 100%;
+            height: 100%;
+        }
+        section .book-body{
+            margin-top: 50px;
+        }
+        section .book-body .left{
+            width: 900px;
+            float: left;
+        }
+        section .book-body .left .book-box{
+            width: 400px;
+            height: 144px;
+            margin: 20px 14px;
+            float: left;
+            border: 1px solid #ccc;
+            padding: 2px;
+            border-radius: 5px;
+            box-shadow: 0 1px 10px rgba(0,0,0,.35), 0 0 5px #f9f2e9 inset;
+        }
+        section .book-body .left .book-box .book-img{
+            width: 100px;
+            margin-top: 2px;
+            height: 136px;
+            float: left;
+            border-radius: 5px;
+            border:1px solid #ccc;
+            padding: 2px;
+        }
+        section .book-body .left .book-box img{
+            width: 100%;
+            height: 100%;
+            border-radius: 5px;
+            transition: all 0.3s linear;
+        }
+        section .book-body .left .book-box img:hover{
+            transform: scale(1.05,1.05);
+        }
+        section .book-body .left .book-box .book-about{
+            width: 280px;
+            float: right;
+            padding: 5px;
+        }
+        section .book-body .left .book-box .book-about .name{
+            font-size: 16px;
+            font-weight: bold;
+        }
+        section .book-body .left .book-box .book-about .name a:hover{
+            color: #e84848;
+        }
+        section .book-body .left .book-box .book-about .introduction{
+            font-size: 14px;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+            height: 78px;
+        }
+        section .book-body .left .book-box .book-about .book-author-type .author{
+            float: left;
+            color: #666;
+        }
+        section .book-body .left .book-box .book-about .book-author-type .author:hover{
+            color: #e84848;
+        }
+        section .book-body .left .book-box .book-about .book-author-type .type-box{
+            float: right;
+        }
+        section .book-body .left .book-box .book-about .book-author-type .type-box .type{
+            font-size: 12px;
+            display: inline-block;
+            padding: 0 5px;
+            border: 1px solid #999;
+            color: #666;
+            margin: 0 2px;
+        }
+        section .book-body .left .book-box .book-about .book-author-type .type-box .type:hover{
+            border-color: #e84848;
+            color: #e84848;
+        }
+        section .book-body .right{
+            width: 290px;
+            float: right;
+        }
+        section .book-body .right .label-list span{
+            display: inline-block;
+            padding: 0 5px;
+            border: 1px solid #ccc;
+            float: left;
+            border-radius: 5px;
+            color: #666;
+            margin: 3px 5px;
+        }
+        section .book-body .right .label-list span:hover{
+            background: #efefef;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="box">
+            <div class="left">
+                <a href="#">网络书库</a>
+            </div>
+            <div class="right">
+                <div class="nav">
+                    <ul>
+                        <a href="/index/index.html"><li class="li-on">首页</li></a>
+                        <a href="/index/ranking/index.html"><li>排行</li></a>
+                        <a href="/index/bookStock/index.html"><li>书库</li></a>
+                    </ul>
+                </div>
+                <div class="login">
+                    <a href="#">注册</a>
+                    <span>|</span>
+                    <a href="#">登录</a>
+                </div>
+                <div class="search">
+                    <input type="text" name="name" placeholder="请输入…" autocomplete="off" class="layui-input">
+                    <span class="search-btn layui-icon-search layui-icon"></span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <section>
+        <div class="box">
+            <div class="layui-carousel" id="carousel">
+                <div carousel-item id="carousel-div">
+                    <div>
+                        <a href="#"><img src="/outimg/admin/rotation/27a803f4-083d-4142-b1bd-bbcc4ca1b495.jpg" alt=""></a>
+                    </div>
+                    <div>条目2</div>
+                    <div>条目3</div>
+                    <div>条目5</div>
+                </div>
+            </div>
+            <div class="book-body">
+                <div class="left">
+                    <div class="layui-card">
+                        <div class="layui-card-header">热门作品</div>
+                        <div class="layui-card-body host-card">
+                        </div>
+                    </div>
+                    <div class="layui-card">
+                        <div class="layui-card-header">新书推荐</div>
+                        <div class="layui-card-body new-card">
+
+                        </div>
+                    </div>
+                    <div class="layui-card">
+                        <div class="layui-card-header">风云榜</div>
+                        <div class="layui-card-body praise-card">
+                        </div>
+                    </div>
+                    <div class="layui-card">
+                        <div class="layui-card-header">完本书籍</div>
+                        <div class="layui-card-body over-card">
+                        </div>
+                    </div>
+                </div>
+                <div class="right">
+                    <div class="layui-card">
+                        <div class="layui-card-header">书籍分类</div>
+                        <div class="layui-card-body label-list">
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="box">
+            <hr class="layui-bg-gray">
+            <div class="about">
+                <span>© 2019 <a href="#">网络书库</a> 邮件：44444444@test.org</span>
+            </div>
+            <div class="height"></div>
+        </div>
+    </footer>
+    <script>
+        layui.use(['form','carousel'], function(){
+            var form = layui.form;
+            var carousel = layui.carousel;
+            carousel.render({
+                elem: '#carousel'
+                ,width: '100%' //设置容器宽度
+                ,arrow: 'always' //始终显示箭头
+                //,anim: 'updown' //切换动画方式
+            });
+        });
+        $.ajax({
+            type: "get",
+            url: backRoot + "/index/list",
+            success: function (result) {
+                var hostTxt = getTxt(result.map.data.host);
+                var newTxt = getTxt(result.map.data.new);
+                var praiseTxt = getTxt(result.map.data.praise);
+                var overTxt = getTxt(result.map.data.over);
+                $(".host-card").html(hostTxt);
+                $(".new-card").html(newTxt);
+                $(".praise-card").html(praiseTxt);
+                $(".over-card").html(overTxt);
+            }
+        })
+        function getTxt(result){
+            var txt = '';
+            for (var i=0;i<result.length;i++){
+                var typeTxt = '';
+                if (result[i].labelList){
+                    for (var j=0;j<result[i].labelList.length;j++){
+                        typeTxt += '<a target="_blank" href="/index/bookStock/index.html?label='+result[i].labelList[j].name+'"><span class="type">'+result[i].labelList[j].name+'</span></a>';
+                    }
+                }
+                txt += '<div class="book-box">\n' +
+                    '                                <div class="book-img"><a target="_blank" href="index/bookAbout.html?bookId='+result[i].bookId+'"><img src="'+result[i].headImage+'" alt="书籍图"></a></div>\n' +
+                    '                                <div class="book-about">\n' +
+                    '                                    <span class="name"><a target="_blank" href="index/bookAbout.html?bookId='+result[i].bookId+'">'+result[i].name+'</a></span>\n' +
+                    '                                    <p class="introduction">'+result[i].bookExplain+'</p>\n' +
+                    '                                    <div class="book-author-type">\n' +
+                    '                                        <a href="#"><span class="author">'+result[i].author+'</span></a>\n' +
+                    '                                        <div class="type-box">\n' +
+                    '                                            ' +typeTxt+
+                    '                                        </div>\n' +
+                    '                                    </div>\n' +
+                    '                                </div>\n' +
+                    '                                <div class="clear"></div>\n' +
+                    '                            </div>';
+            }
+            txt += '<div class="clear"></div>\n';
+            return txt;
+        }
+        $.ajax({
+            url: backRoot + "/index/getAllLabel",
+            type: "get",
+            success: function (result) {
+                var txt = ''
+                for(var i=0;i<result.map.data.length;i++){
+                    txt += '<a target="_blank" href="/index/bookStock/index.html?label='+result.map.data[i].name+'"><span>'+result.map.data[i].name+'</span></a>';
+                }
+                txt += '<div class="clear"></div>';
+                $(".label-list").html(txt)
+            }
+        })
+        $.ajax({
+            type: "get",
+            url: backRoot + "/index/getRotationList",
+            success: function (result) {
+                var txt = ""
+                for(var i=0;i<result.map.data.length;i++){
+                    txt += '<div><a href="'+result.map.data[i].url+'" target="_blank"><img src="'+result.map.data[i].imagePath+'" /></a></div>'
+                }
+                $("#carousel-div").html(txt)
+            }
+        })
+    </script>
+</body>
+</html>
