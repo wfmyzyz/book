@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>角色列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../backstage/layuiadmin/layui/css/layui.css" media="all">
+    <script src="../../../backstage/layuiadmin/layui/layui.js"></script>
+    <script src="../../../backstage/layuiadmin/jquery-3.4.1.js"></script>
+    <script src="../../../backstage/layuiadmin/jquery.cookie.js"></script>
+    <link rel="stylesheet" href="../../../backstage/layuiadmin/layui_ext/dtree/dtree.css" />
+    <link rel="stylesheet" href="../../../backstage/layuiadmin/layui_ext/dtree/font/dtreefont.css" />
+    <script src="../../../backstage/layuiadmin/layui_ext/dist/xm-select.js"></script>
+    <script src="../../../backstage/config.js"></script>
+</head>
+<body>
+    <div class="layui-fluid">
+        <div id="head" style="margin-top: 10px" class="layui-form">
+            <ul id="roleTree" class="dtree" data-id="0"></ul>
+        </div>
+    </div>
+    <div id="select-box" style="padding:20px;display: none;">
+        <input type="hidden" id="bindRoleId" />
+        <div id="selectTree" class="xm-select-demo"></div>
+        <div class="layui-form-item">
+            <button class="layui-btn bind-submit" style="position: absolute;right: 10px;bottom: 10px">绑定</button>
+        </div>
+    </div>
+    <script>
+        var selectBox;
+        layui.extend({
+            dtree: '../../../backstage/layuiadmin/layui_ext/dtree/dtree'   // {/}的意思即代表采用自有路径，即不跟随 base 路径
+        }).use(['dtree','layer','jquery'], function(){
+            var dtree = layui.dtree, layer = layui.layer, $ = layui.jquery;
+            // 初始化树
+            var DemoTree = dtree.render({
+                elem: "#roleTree",
+                line: true,
+                ficon: ["2", "1"],
+                icon: -1,
+                toolbar: true,
+                toolbarWay: "follow",
+                headers: {"token":$.cookie("token")},
+                response: {statusName: "code",statusCode: "200",message: "msg"},
+                dataStyle: "layuiStyle",
+                url: userBackRoot + "/back/role/getRoleTreeList", // 使用url加载（可与data加载同时存在）
+                toolbarFun: {
+                    addTreeNode: function (treeNode, $div) {
+                        var params = {
+                            "name" : treeNode.addNodeName,
+                            "fRoleId" : treeNode.parentId
+                        }
+                        $.ajax({
+                            type: "post",
+                            headers: {"token":$.cookie("token")},
+                            contentType:"application/json",
+                            data:JSON.stringify(params),
+                            url: userBackRoot + "/back/role/addRole",
+                            success: function(result){
+                                if (result.code == 200){
+                                    DemoTree.changeTreeNodeAdd(true); // 添加成功
+                                    DemoTree.reload();
+                                    return
+                                }
+                                layer.alert(result.data.error)
+                                DemoTree.changeTreeNodeAdd(false); // 添加失败
+                            },
+                            error: function(result){
+                                layer.alert(result.data.error)
+                                DemoTree.changeTreeNodeAdd(false); // 添加失败
+                            }
+                        });
+                    },
+                    editTreeNode: function (treeNode, $div) {
+                        var params = {
+                            "roleId" : treeNode.nodeId,
+                            "roleName" : treeNode.editNodeName
+                        }
+                        $.ajax({
+                            type: "post",
+                            headers: {"token":$.cookie("token")},
+                            contentType:"application/json",
+                            data:JSON.stringify(params),
+                            url: userBackRoot + "/back/role/updateRoleName",
+                            success: function (result) {
+                                if (result.code == 200){
+                                    DemoTree.changeTreeNodeEdit(true);// 修改成功
+                                    return
+                                }
+                                layer.alert(result.data.error)
+                                DemoTree.changeTreeNodeEdit(false);//修改失败
+                            },
+                            error: function (result) {
+                                layer.alert(result.data.error)
+                                DemoTree.changeTreeNodeEdit(false);//修改失败
+                            }
+                        });
+                    },
+                    delTreeNode: function (treeNode, $div) {
+                        var params = [parseInt(treeNode.nodeId)]
+                        $.ajax({
+                            type: "post",
+                            headers: {"token":$.cookie("token")},
+                            contentType:"application/json",
+                            data:JSON.stringify(params),
+                            url: userBackRoot + "/back/role/deleteRole",
+                            success: function (result) {
+                                if (result.code == 200){
+                                    DemoTree.changeTreeNodeDel(true); // 删除成功
+                                    return
+                                }
+                                layer.alert(result.data.error)
+                                DemoTree.changeTreeNodeDel(false);// 删除失败
+                            },
+                            error: function (result) {
+                                layer.alert(result.data.error)
+                                DemoTree.changeTreeNodeDel(false);// 删除失败
+                            }
+                        });
+                    }
+                },
+                toolbarExt:[{toolbarId: "bindAuthority",icon:"dtree-icon-sort",title:"绑定权限",handler: function(node,$div){
+                    $("#bindRoleId").val(node.nodeId)
+                    var params = {
+                        "roleId" : node.nodeId
+                    }
+                    $.ajax({
+                        type: "post",
+                        headers: {"token":$.cookie("token")},
+                        contentType:"application/json",
+                        data:JSON.stringify(params),
+                        url: userBackRoot + "/back/authority/getAuthorityTreeByUserId",
+                        success: function (result) {
+                            if (result.code === 200){
+                                selectTree.update({
+                                    data: result.map.data.data
+                                })
+                                selectBox = layer.open({
+                                    type: 1,
+                                    content: $('#select-box'),
+                                    area: ['60%', '600px'],
+                                    title: "绑定权限"
+                                });
+                                return
+                            }
+                            layer.alert(result.map.error)
+                        }
+                    })
+                }}]
+            });
+            // 绑定节点点击事件
+            dtree.on("node(roleTree)", function(obj){
+                if(!obj.param.leaf){
+                    var $div = obj.dom;
+                    DemoTree.clickSpread($div);  //调用内置函数展开节点
+                }
+            });
+            var selectTree = xmSelect.render({
+                el: '#selectTree',
+                autoRow: true,
+                filterable: true,
+                direction: 'auto',
+                height: '350px',
+                prop: {
+                    name: 'title',
+                    value: 'id',
+                    children: 'children',
+                    selected: 'selected'
+                },
+                tree: {
+                    show: true,
+                    showFolderIcon: true,
+                    showLine: true,
+                    indent: 20,
+                    strict: false
+                },
+                data: []
+            })
+            $(".bind-submit").click(function () {
+                var authorityIds = [];
+                for (var i=0;i<selectTree.getValue().length;i++){
+                    authorityIds.push(selectTree.getValue()[i].id)
+                }
+                var params = {
+                    "roleId" : $("#bindRoleId").val(),
+                    "authorityIds" : authorityIds
+                }
+                $.ajax({
+                    type: "post",
+                    headers: {"token":$.cookie("token")},
+                    contentType:"application/json",
+                    data:JSON.stringify(params),
+                    url: userBackRoot + "/back/roleAuthority/roleBindAuthority",
+                    success: function (result) {
+                        if (result.code === 200){
+                            layer.alert(result.map.data)
+                            layer.close(selectBox)
+                            return
+                        }
+                        layer.alert(result.map.error)
+                    }
+                })
+            })
+        })
+    </script>
+</body>
+</html>

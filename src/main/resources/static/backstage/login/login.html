@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<head>
+	<title>网络书库后台-登录页面</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../backstage/jquery/jquery-3.4.1.js"></script>
+	<script src="../../backstage/layuiadmin/layui/layui.js"></script>
+	<link href="../../backstage/login/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	<link href="../../backstage/login/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link href="../../backstage/login/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+	<link href="../../backstage/login/css/templatemo_style.css" rel="stylesheet" type="text/css">
+	<link href="../../backstage/layuiadmin/layui/css/layui.css" rel="stylesheet" type="text/css">
+	<script src="../../backstage/config.js"></script>
+</head>
+<body class="templatemo-bg-gray">
+	<div class="container">
+		<div class="col-md-12">
+			<h1 class="margin-bottom-15">登录 后台</h1>
+			<form class="form-horizontal templatemo-container templatemo-login-form-1 margin-bottom-30" onsubmit="return false;" role="form" action="#" method="post">
+		        <div class="form-group">
+		          <div class="col-xs-12">		            
+		            <div class="control-wrapper">
+		            	<label for="adminname" class="control-label fa-label"><i class="fa fa-user fa-medium"></i></label>
+		            	<input type="text" class="form-control" id="adminname" placeholder="用户名">
+		            </div>		            	            
+		          </div>              
+		        </div>
+		        <div class="form-group">
+		          <div class="col-md-12">
+		          	<div class="control-wrapper">
+		            	<label for="password" class="control-label fa-label"><i class="fa fa-lock fa-medium"></i></label>
+		            	<input type="password" class="form-control" id="password" placeholder="密码">
+		            </div>
+		          </div>
+		        </div>
+				<div class="form-group">
+					<div class="col-md-12">
+						<div class="control-wrapper">
+							<label for="vrify-code" class="control-label fa-label"><i class="fa fa-pencil-square fa-medium"></i></label>
+							<input type="text" class="form-control" id="vrify-code" placeholder="验证码">
+							<img id="vrifyImg" src="/getVrifyCode" style="margin: 10px 23% 0px;cursor: pointer" />
+						</div>
+					</div>
+				</div>
+		        <div class="form-group">
+		          <div class="col-md-12">
+	             	<div class="checkbox control-wrapper">
+	                	<label>
+	                  		<input type="checkbox" id="remember-me"> 记住我
+                		</label>
+	              	</div>
+		          </div>
+		        </div>
+		        <div class="form-group">
+		          <div class="col-md-12">
+		          	<div class="control-wrapper">
+						<button id="login-btn" value="登 录" class="btn btn-info">登 录</button>
+		          		<a href="forgot-password.html" class="text-right pull-right">忘记密码?</a>
+		          	</div>
+		          </div>
+		        </div>
+		        <hr>
+		        <div class="form-group">
+		        	<div class="col-md-12">
+		        		<label>其它登录方式: </label>
+		        		<div class="inline-block">
+		        			<a href="#"><i class="fa fa-facebook-square login-with"></i></a>
+			        		<a href="#"><i class="fa fa-twitter-square login-with"></i></a>
+			        		<a href="#"><i class="fa fa-google-plus-square login-with"></i></a>
+			        		<a href="#"><i class="fa fa-tumblr-square login-with"></i></a>
+			        		<a href="#"><i class="fa fa-github-square login-with"></i></a>
+		        		</div>		        		
+		        	</div>
+		        </div>
+		      </form>
+		</div>
+		<script>
+			layui.use('layer', function(){
+				var layer = layui.layer;
+			});
+		</script>
+		<script>
+			$("#login-btn").click(function () {
+				$.ajax({
+					type: "post",
+					url: backRoot+"/back/adminLogin",
+					data: {adminname:$("#adminname").val(),password:$("#password").val(),rememberMe:$("#remember-me").is(':checked'),vrifyCode:$("#vrify-code").val()},
+					success: function (result) {
+						var jsonResult = JSON.parse(result);
+						if(jsonResult.statusCode!=200){
+							layer.alert(jsonResult.statusMsg);
+							$("#vrifyImg").attr("src",backRoot+"/getVrifyCode?d="+Math.random());
+							return false;
+						}
+						layer.alert(jsonResult.statusMsg,function () {
+							window.location.href = backRoot+"/back/admin/index.html";
+						});
+					}
+				})
+			})
+			$("#vrifyImg").click(function () {
+				$(this).attr("src",backRoot+"/getVrifyCode?d="+Math.random());
+			})
+		</script>
+	</div>
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>权限列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../backstage/layuiadmin/layui/css/layui.css" media="all">
+    <script src="../../../backstage/layuiadmin/layui/layui.js"></script>
+    <script src="../../../backstage/layuiadmin/jquery-3.4.1.js"></script>
+    <script src="../../../backstage/layuiadmin/jquery.cookie.js"></script>
+    <link rel="stylesheet" href="../../../backstage/layuiadmin/layui_ext/dtree/dtree.css" />
+    <link rel="stylesheet" href="../../../backstage/layuiadmin/layui_ext/dtree/font/dtreefont.css" />
+    <script src="../../../backstage/config.js"></script>
+</head>
+<body>
+    <div class="layui-fluid">
+        <div id="head" style="margin-top: 10px" class="layui-form">
+            <ul id="authorityTree" class="dtree" data-id="0"></ul>
+        </div>
+    </div>
+    <div id="add-root" style="padding:20px;display: none;">
+        <div class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <label class="layui-form-label">新增节点：</label>
+                <div class="layui-input-block">
+                    <input type="text" id="root-name" name="name" autocomplete="off" placeholder="请输入根节点名称" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">权限地址：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="url" id="root-url" autocomplete="off" placeholder="请输入权限地址" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="sort" id="root-sort" autocomplete="off" placeholder="请输入排序值" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">权限类型：</label>
+                <div class="layui-input-block">
+                    <select name="type" lay-verify="" disabled>
+                        <option value="页面" checked>页面</option>
+                        <option value="按钮">按钮</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否显示：</label>
+                <div class="layui-input-block">
+                    <select name="display" lay-verify="" id="root-display">
+                        <option value="显示" checked>显示</option>
+                        <option value="隐藏">隐藏</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item" style="text-align: center">
+                <button class="layui-btn layui-btn-normal add-root-submit">确认添加</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        var addRootBox;
+        var authorityType = ["页面","按钮"];
+        var authorityDisplay = ["显示","隐藏"];
+        layui.extend({
+            dtree: '../../../backstage/layuiadmin/layui_ext/dtree/dtree'   // {/}的意思即代表采用自有路径，即不跟随 base 路径
+        }).use(['dtree','layer','jquery'], function(){
+            var dtree = layui.dtree, layer = layui.layer, $ = layui.jquery;
+            var AuthorityTree = dtree.render({
+                elem: "#authorityTree",
+                line: true,
+                ficon: ["2", "5"],
+                icon: -1,
+                toolbar: true,
+                toolbarWay: "follow",
+                headers: {"token": $.cookie("token")},
+                menubar:true,
+                response: {statusName: "code",statusCode: "200",message: "msg"},
+                dataStyle: "layuiStyle",
+                menubarTips:{
+                    group:[{
+                        menubarId: "addAuthorityRoot",
+                        icon: "dtree-icon-roundadd",
+                        title: "添加根权限",
+                        handler: function(node, $div){
+                            $("#root-name").val("");
+                            $("#root-url").val("");
+                            $("#root-sort").val("");
+                            addRootBox = layer.open({
+                                type: 1,
+                                content: $('#add-root'),
+                                area: ['60%', "400px"],
+                                title: "添加根权限"
+                            });
+                        }
+                    }]
+                },
+                toolbarBtn: [
+                    [
+                        {"label":"权限地址","name":"url"},
+                        {"label":"排序值","name":"sort"},
+                        {"label":"权限类型","name":"type","type":"select","optionsData":authorityType},
+                        {"label":"是否显示","name":"display","type":"select","optionsData":authorityDisplay}
+                    ],
+                    [
+                        {"label":"权限地址","name":"url"},
+                        {"label":"排序值","name":"sort"},
+                        {"label":"权限类型","name":"type","type":"select","optionsData":authorityType},
+                        {"label":"是否显示","name":"display","type":"select","optionsData":authorityDisplay}
+                    ]
+                ],
+                url: userBackRoot + "/back/authority/getAuthorityTreeList",
+                toolbarFun: {
+                    addTreeNode: function (treeNode, $div) {
+                        var params = {
+                            "name" : treeNode.addNodeName,
+                            "url" : treeNode.url,
+                            "type" : authorityType[treeNode.type],
+                            "fAuthorityId" : treeNode.parentId,
+                            "sort" : treeNode.sort,
+                            "display" : authorityDisplay[treeNode.display]
+                        }
+                        layer.load()
+                        $.ajax({
+                            type: "post",
+                            headers: {"token":$.cookie("token")},
+                            contentType:"application/json",
+                            data:JSON.stringify(params),
+                            url: userBackRoot + "/back/authority/addAuthority",
+                            success: function(result){
+                                layer.closeAll('loading')
+                                if (result.code == 200){
+                                    AuthorityTree.changeTreeNodeAdd(true); // 添加成功
+                                    AuthorityTree.reload();
+                                    return
+                                }
+                                layer.alert(result.map.error)
+                                AuthorityTree.changeTreeNodeAdd(false); // 添加失败
+                            },
+                            error: function(result){
+                                layer.closeAll('loading')
+                                layer.alert(result.map.error)
+                                AuthorityTree.changeTreeNodeAdd(false); // 添加失败
+                            }
+                        });
+                    },
+                    editTreeLoad: function(treeNode){
+                        var params = {
+                            "authorityId" : treeNode.nodeId
+                        }
+                        layer.load()
+                        $.ajax({
+                            type: "post",
+                            headers: {"token":$.cookie("token")},
+                            contentType:"application/json",
+                            data:JSON.stringify(params),
+                            url: userBackRoot + "/back/authority/getAuthorityById",
+                            success: function (result) {
+                                layer.closeAll('loading')
+                                if (result.map.data.type === "页面"){
+                                    result.map.data.type = 0
+                                }else {
+                                    result.map.data.type = 1
+                                }
+                                if (result.map.data.display === "显示"){
+                                    result.map.data.display = 0
+                                }else {
+                                    result.map.data.display = 1
+                                }
+                                result.map.data.editNodeName = result.map.data.name
+                                AuthorityTree.changeTreeNodeDone(result.map.data);
+                            }
+                        })
+                    },
+                    editTreeNode: function (treeNode, $div) {
+                        var params = {
+                            "authorityId" : treeNode.nodeId,
+                            "authorityName" : treeNode.editNodeName,
+                            "authorityUrl" : treeNode.url,
+                            "authorityType" : authorityType[treeNode.type],
+                            "sort" : treeNode.sort,
+                            "display" : authorityDisplay[treeNode.display]
+                        }
+                        layer.load()
+                        $.ajax({
+                            type: "post",
+                            headers: {"token":$.cookie("token")},
+                            contentType:"application/json",
+                            data:JSON.stringify(params),
+                            url: userBackRoot + "/back/authority/updateAuthority",
+                            success: function (result) {
+                                layer.closeAll('loading')
+                                if (result.code == 200){
+                                    AuthorityTree.changeTreeNodeEdit(true);// 修改成功
+                                    AuthorityTree.reload();
+                                    return
+                                }
+                                layer.alert(result.map.error)
+                                AuthorityTree.changeTreeNodeEdit(false);//修改失败
+                            },
+                            error: function (result) {
+                                layer.closeAll('loading')
+                                layer.alert(result.map.error)
+                                AuthorityTree.changeTreeNodeEdit(false);//修改失败
+                            }
+                        });
+                    },
+                    delTreeNode: function (treeNode, $div) {
+                        var params = [parseInt(treeNode.nodeId)]
+                        layer.load()
+                        $.ajax({
+                            type: "post",
+                            headers: {"token":$.cookie("token")},
+                            contentType:"application/json",
+                            data:JSON.stringify(params),
+                            url: userBackRoot + "/back/authority/deleteAuthority",
+                            success: function (result) {
+                                layer.closeAll('loading')
+                                if (result.code == 200){
+                                    AuthorityTree.changeTreeNodeDel(true); // 删除成功
+                                    AuthorityTree.reload();
+                                    return
+                                }
+                                layer.alert(result.map.error)
+                                AuthorityTree.changeTreeNodeDel(false);// 删除失败
+                            },
+                            error: function (result) {
+                                layer.closeAll('loading')
+                                layer.alert(result.map.error)
+                                AuthorityTree.changeTreeNodeDel(false);// 删除失败
+                            }
+                        });
+                    }
+                }
+            })
+            // 绑定节点点击事件
+            dtree.on("node(authorityTree)", function(obj){
+                if(!obj.param.leaf){
+                    var $div = obj.dom;
+                    AuthorityTree.clickSpread($div);  //调用内置函数展开节点
+                }
+            });
+            $(".add-root-submit").click(function () {
+                if ($.trim($("#root-name").val()) === ""){
+                    layer.alert("节点名称不能为空")
+                    return
+                }
+                var params = {
+                    "name" : $("#root-name").val(),
+                    "url" : $("#root-url").val(),
+                    "type" : "页面",
+                    "fAuthorityId" : 0,
+                    "sort" : $("#root-sort").val(),
+                    "display" : $("#root-display").val()
+                }
+                layer.load()
+                $.ajax({
+                    url: userBackRoot + "/back/authority/addAuthority",
+                    type: "POST",
+                    headers: {"token": $.cookie("token")},
+                    contentType: "application/json",
+                    data: JSON.stringify(params),
+                    success: function (result) {
+                        layer.closeAll('loading')
+                        if (result.code === 200){
+                            layer.alert(result.map.data)
+                            layer.close(addRootBox)
+                            AuthorityTree.reload();
+                            return
+                        }
+                        layer.alert(result.map.error)
+                    }
+                })
+            })
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../backstage/layuiadmin/layui/css/layui.css" media="all">
+    <script src="../../../backstage/layuiadmin/layui/layui.js"></script>
+    <script src="../../../backstage/layuiadmin/jquery-3.4.1.js"></script>
+    <script src="../../../backstage/layuiadmin/jquery-md5.js"></script>
+    <script src="../../../backstage/layuiadmin/jquery.cookie.js"></script>
+    <script src="../../../backstage/layuiadmin/layui_ext/dist/xm-select.js"></script>
+    <script src="../../../backstage/config.js"></script>
+</head>
+<body>
+    <div class="layui-fluid">
+        <div id="head" style="margin-top: 10px" class="layui-form">
+            <button class="layui-btn add-btn">添加</button>
+            <button class="layui-btn layui-btn-danger remove-btn" style="margin-right: 20px">删除</button>
+            <div class="layui-inline">
+                <div class="layui-inline">
+                    <label class="layui-form-label">用户id</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="search-userId"  placeholder='请输入用户id' class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">用户账号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="search-username"  placeholder='请输入用户账号' class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">用户状态：正常,冻结</label>
+                    <div class="layui-input-inline">
+                        <select id="search-status" name="search-status" lay-verify="">
+                            <option value="">请选择状态</option>
+                            <option value="">全部</option>
+                            <option value="正常">正常</option>
+                            <option value="冻结">冻结</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">开始时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="search-start-time"   class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">结束时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="search-end-time"   class="layui-input">
+                    </div>
+                </div>
+                <button class="layui-btn search-result layui-btn-warm">搜索</button>
+                <button class="layui-btn search-back layui-btn-normal">返回</button>
+            </div>
+        </div>
+        <table id="table" lay-filter="table"></table>
+    </div>
+    <div id="box" style="padding:20px;display: none">
+        <div class="layui-form">
+            <input type="hidden" id="result-userId" />
+            <div class="layui-form-item need-hidden-box">
+                <label class="layui-form-label">用户账号</label>
+                <div class="layui-input-block">
+                    <input type="text" id="result-username" name="username"  placeholder='请输入用户账号' class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-block">
+                    <input type="password" id="result-password" name="password"  placeholder='请输入密码' class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">确认密码</label>
+                <div class="layui-input-block">
+                    <input type="password" id="result-passwords" name="passwords"  placeholder='请确认密码' class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <button class="layui-btn add-submit" style="float: right" data-opt="add">添加</button>
+            </div>
+        </div>
+    </div>
+    <div id="select-box" style="padding:20px;display: none;">
+        <input type="hidden" id="bindUserId" />
+        <div id="selectTree" class="xm-select-demo"></div>
+        <div class="layui-form-item">
+            <button class="layui-btn bind-submit" style="position: absolute;right: 10px;bottom: 10px">绑定</button>
+        </div>
+    </div>
+    <script type="text/html" id="tools">
+        <a class="layui-btn layui-btn-xs" lay-event="bindRole">绑定角色</a>
+        <a class="layui-btn layui-btn-xs" lay-event="edit">修改密码</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script>
+    <script>
+        var articleBox;
+        var finishPage;
+        var indexPage;
+        var selectBox;
+        var selectTree = xmSelect.render({
+            el: '#selectTree',
+            autoRow: true,
+            filterable: true,
+            direction: 'auto',
+            height: '350px',
+            prop: {
+                name: 'title',
+                value: 'id',
+                children: 'children',
+                selected: 'selected'
+            },
+            tree: {
+                show: true,
+                showFolderIcon: true,
+                showLine: true,
+                indent: 20,
+                strict: false
+            },
+            data: []
+        })
+        layui.use(['table','laydate','form'], function() {
+            var table = layui.table;
+            var laydate = layui.laydate;
+            var form = layui.form;
+            laydate.render({
+                elem: '#search-start-time' //指定元素
+                ,type: 'datetime'
+            });
+            laydate.render({
+                elem: '#search-end-time' //指定元素
+                ,type: 'datetime'
+            });
+            var tableIns =table.render({
+                elem: '#table'
+                ,url: userBackRoot+'/back/user/getUserList' //数据接口
+                ,headers: {"token":$.cookie("token")}
+                ,page: true //开启分页
+                ,cols: [[ //表头
+                    {checkbox: true}
+                    ,{field: 'userId', title: '用户id',sort: true,align: "center"}
+                    ,{field: 'username', title: '用户账号',align: "center"}
+                    ,{field: 'password', title: '密码',align: "center"}
+                    ,{field: 'salt', title: '盐值',align: "center"}
+                    ,{field: 'status', title: '状态:正常,冻结',align: "center",templet: function (d) {
+                        if (d.status == "正常"){
+                            return '<div><input type="checkbox" name="check" value="'+d.userId+'" lay-skin="switch" lay-filter="userStatus" checked lay-text="正常|冻结"></div>';
+                        }else {
+                            return '<div><input type="checkbox" name="check" value="'+d.userId+'" lay-skin="switch" lay-filter="userStatus" lay-text="正常|冻结"></div>';
+                        }
+                    }}
+                    ,{field: 'updateTime', title: '更新时间',align: "center"}
+                    ,{field: 'createTime', title: '创建时间',align: "center"}
+                    , {title: '操作', align: "center", toolbar: '#tools',width: 230}
+                ]],
+                done: function (res, curr, count) {
+                    if (count%10==0){
+                        count++;
+                    }
+                    finishPage = Math.ceil(count/parseInt($(".layui-laypage-limits").find("option:selected").val()));
+                    indexPage = curr;
+                }
+            });
+            $(document).on("click",".search-result",function () {
+                tableIns.reload({
+                    where: { //设定异步数据接口的额外参数，任意设
+                        userId: $("#search-userId").val(),
+                        username: $("#search-username").val(),
+                        status: $("#search-status").val(),
+                        startTime: $("#search-start-time").val(),
+                        endTime: $("#search-end-time").val()
+                    }
+                })
+            })
+            $(document).on("click",".search-back",function () {
+                tableIns.reload({
+                    where: { //设定异步数据接口的额外参数，任意设
+                        userId: "",
+                        username: "",
+                        status: "",
+                        startTime: "",
+                        endTime: ""
+                    }
+                })
+            })
+            $(document).on("click",".add-btn",function () {
+                clearForm();
+                form.render();
+                $(".need-hidden-box").css("display","block");
+                $(".add-submit").attr("data-opt","add").text("添加");
+                articleBox = layer.open({
+                    type: 1,
+                    content: $('#box'),
+                    area: ['60%', 'auto'],
+                    title: "添加"
+                });
+            })
+            form.on('switch(userStatus)', function(data){
+                var params = {
+                    "userId" : data.value,
+                    "status" : data.elem.checked == true ? "正常":"冻结"
+                }
+                $.ajax({
+                    url: userBackRoot + "/back/user/updateUserStatus",
+                    type: "POST",
+                    headers: {"token":$.cookie("token")},
+                    contentType:"application/json",
+                    data:JSON.stringify(params),
+                    success: function (result) {
+                        if (result.code == 200){
+                            return
+                        }
+                        layer.alert(result.map.error)
+                    }
+                })
+            });
+            table.on('tool(table)', function(obj) {
+                var data = obj.data;
+                if (obj.event === 'edit') {
+                    clearForm();
+                    $(".need-hidden-box").css("display","none");
+                    $(".add-submit").attr("data-opt","edit").text("修改");
+                    $("#result-userId").val(data.userId);
+                    articleBox = layer.open({
+                        type: 1,
+                        content: $('#box'),
+                        area: ['60%', 'auto'],
+                        title: "修改"
+                    });
+                }else if(obj.event === 'del'){
+                    layer.confirm('是否删除?', function(index){
+                        layer.load();
+                        var params = [parseInt(data.userId)]
+                        $.ajax({
+                            type: "post",
+                            url: userBackRoot + "/back/user/deleteUser",
+                            headers: {"token":$.cookie("token")},
+                            contentType:"application/json",
+                            data:JSON.stringify(params),
+                            success: function (result) {
+                                layer.closeAll("loading");
+                                if(result.code == 200){
+                                    layer.alert(result.map.data);
+                                    tableIns.reload({
+                                        page:{
+                                            curr:1
+                                        }
+                                    });
+                                    return false;
+                                }
+                                layer.alert(result.map.error);
+                            }
+                        })
+                        layer.close(index);
+                    });
+                }else if (obj.event === "bindRole"){
+                    $("#bindUserId").val(data.userId)
+                    var params = {
+                        "userId" : data.userId
+                    }
+                    $.ajax({
+                        type: "post",
+                        url: userBackRoot + "/back/role/getRoleTreeListByUserId",
+                        headers: {"token":$.cookie("token")},
+                        contentType:"application/json",
+                        data:JSON.stringify(params),
+                        success: function (result) {
+                            if (result.code === 200){
+                                selectTree.update({
+                                    data: result.map.data.data
+                                })
+                                selectBox = layer.open({
+                                    type: 1,
+                                    content: $('#select-box'),
+                                    area: ['60%', '600px'],
+                                    title: "绑定角色"
+                                });
+                                return
+                            }
+                            layer.alert(result.map.error)
+                        }
+                    })
+                }
+            });
+            $(".add-submit").click(function () {
+                if ($(this).attr("data-opt") == "add") {
+                    if ($.trim($("#result-username").val()) === "" || $.trim($("#result-password").val()) === "" || $.trim($("#result-passwords").val()) === ""){
+                        layer.alert("必填项不能为空");
+                        return false
+                    }
+                    if ($("#result-password").val() != $("#result-passwords").val()){
+                        layer.alert("两次密码不一致");
+                        return false
+                    }
+                    var params = {
+                        "username" : $("#result-username").val(),
+                        "password" : $.md5($("#result-password").val()),
+                        "passwords" : $.md5($("#result-passwords").val())
+                    }
+                    layer.load();
+                    $.ajax({
+                        type: "post",
+                        headers: {"token":$.cookie("token")},
+                        contentType:"application/json",
+                        data:JSON.stringify(params),
+                        url: userBackRoot + "/back/user/addUser",
+                        success: function (result) {
+                            layer.closeAll("loading");
+                            if(result.code == 200){
+                                layer.alert(result.map.data);
+                                layer.close(articleBox);
+                                tableIns.reload({
+                                    page: {
+                                        curr: finishPage
+                                    }
+                                });
+                                return false;
+                            }
+                            if(result.map.error){
+                                layer.alert(result.map.error);
+                            }
+                        }
+                    })
+                }
+                if ($(this).attr("data-opt") === "edit") {
+                    if ($.trim($("#result-userId").val()) === "" || $.trim($("#result-password").val()) === "" || $.trim($("#result-passwords").val()) === ""){
+                        layer.alert("必填项不能为空");
+                        return false
+                    }
+                    if ($("#result-password").val() != $("#result-passwords").val()){
+                        layer.alert("两次密码不一致");
+                        return false
+                    }
+                    var params = {
+                        "userId" : $("#result-userId").val(),
+                        "password" :$.md5($("#result-password").val()),
+                        "passwords" :$.md5($("#result-passwords").val()),
+                    }
+                    layer.load();
+                    $.ajax({
+                        type: "post",
+                        headers: {"token":$.cookie("token")},
+                        contentType:"application/json",
+                        data:JSON.stringify(params),
+                        url: userBackRoot + "/back/user/updatePasswordByUserId",
+                        success: function (result) {
+                            layer.closeAll("loading");
+                            if(result.code == 200){
+                                layer.alert(result.map.data);
+                                layer.close(articleBox);
+                                tableIns.reload({
+                                    page: {
+                                        curr: indexPage
+                                    }
+                                });
+                                return false;
+                            }
+                            if(result.map.error){
+                                layer.alert(result.map.error);
+                            }
+                        }
+                    })
+                }
+            })
+            $(".bind-submit").click(function () {
+                var roleIds = [];
+                for (var i=0;i<selectTree.getValue().length;i++){
+                    roleIds.push(selectTree.getValue()[i].id)
+                }
+                var params = {
+                    "userId" : $("#bindUserId").val(),
+                    "roleIds" : roleIds
+                }
+                $.ajax({
+                    type: "post",
+                    headers: {"token":$.cookie("token")},
+                    contentType:"application/json",
+                    data:JSON.stringify(params),
+                    url: userBackRoot + "/back/userRole/userBindRole",
+                    success: function (result) {
+                        if (result.code === 200){
+                            layer.alert(result.map.data)
+                            layer.close(selectBox)
+                            return
+                        }
+                        layer.alert(result.map.error)
+                    }
+                })
+            })
+            $(document).on("click",".remove-btn",function () {
+                var checkStatus = table.checkStatus('table');
+                if (checkStatus.data.length > 0) {
+                    layer.confirm('是否删除已选中的?', function(index){
+                        layer.load();
+                        var params = [];
+                        for(var i = 0;i<checkStatus.data.length;i++){
+                            params.push(checkStatus.data[i].userId);
+                        }
+                        $.ajax({
+                            type: "post",
+                            url: userBackRoot + "/back/user/deleteUser",
+                            headers: {"token":$.cookie("token")},
+                            contentType:"application/json",
+                            data:JSON.stringify(params),
+                            success: function (result) {
+                                layer.closeAll("loading");
+                                if (result.code == 200) {
+                                    layer.alert(result.map.data);
+                                    tableIns.reload({
+                                        page:{
+                                            curr:1
+                                        }
+                                    });
+                                    return false;
+                                }
+                                layer.alert(result.map.error);
+                            }
+                        })
+                        layer.close(index);
+                    })
+                }
+            })
+        });
+    </script>
+    <script>
+        function clearForm() {
+            $("#result-userId").val("");
+            $("#result-username").val("");
+            $("#result-password").val("");
+            $("#result-passwords").val("");
+        }
+    </script>
+</body>
+</html>

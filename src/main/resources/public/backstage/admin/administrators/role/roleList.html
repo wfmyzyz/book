@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员角色列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../../backstage/layuiadmin/layui/css/layui.css" media="all">
+    <script src="../../../../backstage/layuiadmin/layui/layui.js"></script>
+    <script src="../../../../backstage/jquery/jquery-3.4.1.js"></script>
+    <script src="../../../../backstage/config.js"></script>
+    <style>
+        .message{
+            float: left;
+            margin-left: 200px;
+            margin-top: 10px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-fluid">
+    <div id="head" style="margin-top: 10px">
+        <button class="layui-btn add-btn">添加角色</button>
+        <button class="layui-btn layui-btn-danger remove-btn" style="margin-right: 20px">删除角色</button>
+        <div class="layui-inline">
+            <div class="layui-inline">
+                <label class="layui-form-label">角色ID</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="search-id"  placeholder="请输入角色ID" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">角色名</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="search-name" placeholder="请输入角色名" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">开始</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="search-start-time"   class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">结束</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="search-end-time"   class="layui-input">
+                </div>
+            </div>
+            <button class="layui-btn search-result layui-btn-warm">搜索</button>
+            <button class="layui-btn search-back layui-btn-normal">返回</button>
+        </div>
+    </div>
+    <table id="table" lay-filter="table"></table>
+</div><!--layui-form-item-->
+<div id="box" style="padding:20px;display: none">
+    <div class="layui-form">
+        <input type="hidden" id="result-id" />
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色名</label>
+            <div class="layui-input-block">
+                <input type="text" id="result-name" name="name" required  placeholder="请输入角色名" class="layui-input">
+            </div>
+            <label class="message"></label>
+        </div>
+        <div class="layui-form-item">
+            <button class="layui-btn add-submit" style="float: right" data-opt="add">添加</button>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="tools">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+    var articleBox;
+    var finishPage;
+    var indexPage;
+    layui.use(['table','laydate'], function(){
+        var table = layui.table;
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#search-start-time' //指定元素
+        });
+        laydate.render({
+            elem: '#search-end-time' //指定元素
+        });
+        var tableIns =table.render({
+            elem: '#table'
+            ,url: backRoot+'/back/admin/administrators/role/getAdminRoleList' //数据接口
+            ,page: true //开启分页
+            ,cols: [[ //表头
+                {checkbox: true}
+                ,{field: 'adminRoleId', title: '角色ID', sort: true,align: "center"}
+                ,{field: 'name', title: '角色名',align: "center"}
+                ,{field: 'createTime', title: '创建时间',align: "center"}
+                ,{field: 'updateTime', title: '更改时间',align: "center"}
+                ,{field: 'tbStatus', title: '标签状态',align: "center"}
+                , {title: '操作', align: "center", toolbar: '#tools'}
+            ]],
+            done: function (res, curr, count) {
+                if (count%10==0){
+                    count++;
+                }
+                finishPage = Math.ceil(count/parseInt($(".layui-laypage-limits").find("option:selected").val()));
+                indexPage = curr;
+            }
+        });
+        $(document).on("click",".search-result",function () {
+            tableIns.reload({
+                where: { //设定异步数据接口的额外参数，任意设
+                    adminRoleId: $("#search-id").val()
+                    ,name: $("#search-name").val()
+                    ,startTime: $("#search-start-time").val()
+                    ,endTime: $("#search-end-time").val()
+                }
+            })
+        })
+        $(document).on("click",".search-back",function () {
+            tableIns.reload({
+                where: { //设定异步数据接口的额外参数，任意设
+                    adminRoleId: ""
+                    ,name: ""
+                    ,startTime: ""
+                    ,endTime: ""
+                }
+            })
+        })
+        $(document).on("click",".add-btn",function () {
+            clearForm();
+            $(".add-submit").attr("data-opt","add").text("添加");
+            articleBox = layer.open({
+                type: 1,
+                content: $('#box'),
+                area: ['600px', '250px'],
+                title: "角色添加"
+            });
+        })
+        table.on('tool(table)', function(obj) {
+            var data = obj.data;
+            if (obj.event === 'edit') {
+                $(".add-submit").attr("data-opt","edit").text("修改");
+                $(".message").text("");
+                layer.load();
+                $.ajax({
+                    type: "get",
+                    url: backRoot + "/back/admin/administrators/role/get/"+data.adminRoleId,
+                    success: function (result) {
+                        layer.closeAll("loading");
+                        if(result.code == 200){
+                            $("#result-name").val(result.map.data.name);
+                            $("#result-id").val(result.map.data.adminRoleId);
+                        }
+                    }
+                })
+                articleBox = layer.open({
+                    type: 1,
+                    content: $('#box'),
+                    area: ['600px', '310px'],
+                    title: "角色修改"
+                });
+            }else if(obj.event === 'del'){
+                layer.confirm('是否删除该角色?', function(index){
+                    layer.load();
+                    $.ajax({
+                        type: "get",
+                        url: "/back/admin/administrators/role/remove/"+data.adminRoleId,
+                        success: function (result) {
+                            layer.closeAll("loading");
+                            if(result.code == 200){
+                                layer.alert(result.map.data);
+                                tableIns.reload({
+                                    page:{
+                                        curr:1
+                                    }
+                                });
+                                return false;
+                            }
+                            layer.alert(result.map.error);
+                        }
+                    })
+                    layer.close(index);
+                });
+            }
+        });
+        $(".add-submit").click(function () {
+            if ($(this).attr("data-opt") == "add") {
+                if($.trim($("#result-name").val()) == ""){
+                    layer.alert("角色名不可为空！");
+                    return false;
+                }
+                layer.load();
+                $.ajax({
+                    type: "post",
+                    url: backRoot + "/back/admin/administrators/role/add",
+                    data: {name:$("#result-name").val()},
+                    success: function (result) {
+                        layer.closeAll("loading");
+                        if(result.code == 200){
+                            layer.alert(result.map.data);
+                            layer.close(articleBox);
+                            tableIns.reload({
+                                page: {
+                                    curr: finishPage
+                                }
+                            });
+                            return false;
+                        }
+                        if(result.map.name){
+                            layer.alert(result.map.name);
+                        }
+                        if(result.map.error){
+                            layer.alert(result.map.error);
+                        }
+                    }
+                })
+            }
+            if ($(this).attr("data-opt") == "edit") {
+                layer.load();
+                $.ajax({
+                    type: "post",
+                    url: backRoot + "/back/admin/administrators/role/update",
+                    data: {name:$("#result-name").val(),adminRoleId:$("#result-id").val()},
+                    success: function (result) {
+                        layer.closeAll("loading");
+                        if(result.code == 200){
+                            layer.alert(result.map.data);
+                            layer.close(articleBox);
+                            tableIns.reload({
+                                page: {
+                                    curr: indexPage
+                                }
+                            });
+                            return false;
+                        }
+                        if(result.map.name){
+                            layer.alert(result.map.name);
+                        }
+                        if(result.map.error){
+                            layer.alert(result.map.error);
+                        }
+                    }
+                })
+            }
+        })
+        $(document).on("click",".remove-btn",function () {
+            var checkStatus = table.checkStatus('table');
+            if (checkStatus.data.length > 0) {
+                layer.confirm('是否删除选中的角色?', function(index){
+                    layer.load();
+                    var arr = [];
+                    for(var i = 0;i<checkStatus.data.length;i++){
+                        arr.push(checkStatus.data[i]);
+                    }
+                    $.ajax({
+                        type: "post",
+                        url: "/back/admin/administrators/role/remove",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(arr),
+                        success: function (result) {
+                            layer.closeAll("loading");
+                            if (result.code == 200) {
+                                layer.alert(result.map.data);
+                                tableIns.reload({
+                                    page:{
+                                        curr:1
+                                    }
+                                });
+                                return false;
+                            }
+                            layer.alert(result.map.error);
+                        }
+                    })
+                    layer.close(index);
+                })
+            }
+        })
+    });
+</script>
+<script>
+    $("#result-name").blur(function () {
+        if ($.trim($("#result-name").val()) == "") {
+            return false;
+        }
+        $.ajax({
+            type: "post",
+            url: backRoot + "/back/admin/administrators/role/getIsAdminRole",
+            data: {roleName:$("#result-name").val()},
+            success: function (result) {
+                if (result.code == 200) {
+                    if (result.map.is == "true") {
+                        $(".message").text("该角色名已存在！").css("color","red");
+                    }else{
+                        $(".message").text("该角色名可用！").css("color","green");
+                    }
+                }
+            }
+        })
+    })
+</script>
+<script>
+    function clearForm() {
+        $("#result-name").val("");
+        $(".message").text("");
+    }
+</script>
+</body>
+</html>

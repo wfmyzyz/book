@@ -1,6 +1,8 @@
 package com.wfmyzyz.book.config;
 
 import com.wfmyzyz.book.interceptor.AdminLoginInterceptor;
+import com.wfmyzyz.book.interceptor.ControllerBackInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -11,10 +13,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebAppConfig implements WebMvcConfigurer {
 
-    @Bean
-    public AdminLoginInterceptor adminLoginInterceptor(){
-        return new AdminLoginInterceptor();
-    }
+    @Autowired
+    private ControllerBackInterceptor controllerBackInterceptor;
 
     /**
      * 允许跨域
@@ -32,7 +32,7 @@ public class WebAppConfig implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(adminLoginInterceptor()).addPathPatterns("/back/admin/**");
+        registry.addInterceptor(controllerBackInterceptor).addPathPatterns("/back/**");
     }
 
     @Override

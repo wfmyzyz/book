@@ -1,8 +1,11 @@
 package com.wfmyzyz.book.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,6 +63,21 @@ public class Msg {
             msg.add(error.getField(),error.getDefaultMessage());
         }
         return msg;
+    }
+
+    /**
+     * 过滤器重新登录
+     */
+    public static void needBack(HttpServletResponse response,int code,String message){
+        Msg msg = new Msg();
+        msg.setCode(code);
+        msg.setMsg(message);
+        String resultText = JSONObject.toJSONString(msg);
+        try {
+            response.getWriter().println(resultText);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
