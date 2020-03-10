@@ -10,6 +10,7 @@ import com.wfmyzyz.book.service.impl.BookLabelServiceImpl;
 import com.wfmyzyz.book.service.impl.BookServiceImpl;
 import com.wfmyzyz.book.service.impl.LabelServiceImpl;
 import com.wfmyzyz.book.utils.Msg;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,7 @@ public class BookLabelController {
      * @param id
      * @return
      */
+    @ApiOperation(value="获取书籍绑定标签")
     @RequestMapping(value = "getBookLabel/{id}",method = RequestMethod.GET)
     public Msg getBookLabel(@PathVariable("id") Integer id){
         List<BookLabel> bookBindLabelList = bookLabelServiceImpl.list(new QueryWrapper<BookLabel>().eq("book_id", id).eq("tb_status","正常"));
@@ -66,6 +68,7 @@ public class BookLabelController {
      * @param id
      * @return
      */
+    @ApiOperation(value="获取书籍非绑定标签")
     @RequestMapping(value = "getNoBookLabel/{id}",method = RequestMethod.GET)
     public Msg getNoBookBindLabel(@PathVariable("id") Integer id){
         List<BookLabel> bookBindLabelList = bookLabelServiceImpl.list(new QueryWrapper<BookLabel>().eq("book_id", id).eq("tb_status","正常"));

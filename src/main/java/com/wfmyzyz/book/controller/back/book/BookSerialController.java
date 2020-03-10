@@ -16,6 +16,7 @@ import com.wfmyzyz.book.utils.LayuiBackData;
 import com.wfmyzyz.book.utils.Msg;
 import com.wfmyzyz.book.vo.BookSerialAboutVo;
 import com.wfmyzyz.book.vo.SerialVo;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,7 @@ public class BookSerialController {
      * @param endTime
      * @return
      */
+    @ApiOperation(value="分页获取章回列表")
     @RequestMapping(value = "getSerialList",method = RequestMethod.GET)
     public LayuiBackData getSerialList(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit, @RequestParam(value = "serialId",required = false) String serialId,
                                         @RequestParam(value = "bookId") Integer bookId, @RequestParam(value = "title",required = false) String title,
@@ -101,6 +103,7 @@ public class BookSerialController {
      * @param id
      * @return
      */
+    @ApiOperation(value="修改审核章回状态")
     @RequestMapping("updateSerialCheck/{id}")
     public Msg updateSerialCheck(@PathVariable("id") Integer id){
         BookSerial bookSerial = bookSerialService.getById(id);
@@ -123,6 +126,7 @@ public class BookSerialController {
      * @param id
      * @return
      */
+    @ApiOperation(value="根据ID查询书籍相关信息")
     @RequestMapping("getAddBookAbout/{id}")
     public Msg getAddBookAbout(@PathVariable("id") Integer id){
         BookSerialAboutVo bookSerialAboutVo = new BookSerialAboutVo();
@@ -137,6 +141,7 @@ public class BookSerialController {
      * @param id
      * @return
      */
+    @ApiOperation(value="根据ID获取章回")
     @GetMapping("get/{id}")
     public Msg getSerial(@PathVariable("id") Integer id){
         BookSerial serial = bookSerialService.getById(id);
@@ -157,6 +162,7 @@ public class BookSerialController {
      * @param bindingResult
      * @return
      */
+    @ApiOperation(value="添加章回")
     @Transactional
     @RequestMapping("addSerial")
     public Msg addSerial(@Valid BookSerial bookSerial, BindingResult bindingResult){
@@ -183,6 +189,7 @@ public class BookSerialController {
      * @param bookSerial
      * @return
      */
+    @ApiOperation(value="修改章回")
     @PostMapping("update")
     public Msg update(BookSerial bookSerial) {
         if (StringUtils.isBlank(bookSerial.getTitle()) || StringUtils.isBlank(bookSerial.getText())){
@@ -200,6 +207,7 @@ public class BookSerialController {
      * @param id
      * @return
      */
+    @ApiOperation(value="删除章回")
     @Transactional
     @GetMapping("remove/{id}")
     public Msg delete(@PathVariable("id") Integer id){
@@ -216,6 +224,7 @@ public class BookSerialController {
      * @param bookSerialList
      * @return
      */
+    @ApiOperation(value="批量删除章回")
     @Transactional
     @RequestMapping(value = "remove",method = RequestMethod.POST)
     public Msg removeBatch(@RequestBody List<BookSerial> bookSerialList){
@@ -240,6 +249,7 @@ public class BookSerialController {
      * @param flag
      * @return
      */
+    @ApiOperation(value="修改所有章回审核")
     @PostMapping("updateBookSerialCheck")
     public Msg updateBookSerialCheck(@RequestParam("id") Integer id,@RequestParam("flag") Boolean flag){
         UpdateWrapper<BookSerial> serialUpdateWrapper = new UpdateWrapper<>();

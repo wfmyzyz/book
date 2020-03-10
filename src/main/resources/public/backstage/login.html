@@ -189,30 +189,35 @@
         });
     </script>
     <script>
-        $("#login").click(function () {
-            $.ajax({
-                type: "get",
-                url: userBackRoot + "/api/login/getRsaPublicKey",
-                success: function (result) {
-                    $.cookie("publicKey",result.map.data);
-                    var params = {
-                        "username" : $("#username").val(),
-                        "password" : encryptStrByRsa($.md5($("#password").val()),$.cookie("publicKey"))
-                    }
-                    $.ajax({
-                        type: "post",
-                        contentType:"application/json",
-                        data:JSON.stringify(params),
-                        url: userBackRoot + "/api/login",
-                        success: function (result) {
-                            $.cookie("token",result.map.data);
-                            console.log(result)
-                            if (result.code == 200){
-                                window.location.href = "./admin/index.html"
-                            }
+        layui.use(['layer'], function() {
+            $("#login").click(function () {
+                layer.load();
+                $.ajax({
+                    type: "get",
+                    url: userBackRoot + "/api/login/getRsaPublicKey",
+                    success: function (result) {
+                        $.cookie("publicKey",result.map.data);
+                        var params = {
+                            "username" : $("#username").val(),
+                            "password" : encryptStrByRsa($.md5($("#password").val()),$.cookie("publicKey"))
                         }
-                    })
-                }
+                        $.ajax({
+                            type: "post",
+                            contentType:"application/json",
+                            data:JSON.stringify(params),
+                            url: userBackRoot + "/api/login",
+                            success: function (result) {
+                                layer.closeAll("loading")
+                                $.cookie("token",result.map.data);
+                                if (result.code == 200){
+                                    window.location.href = "./admin/index.html"
+                                    return
+                                }
+                                layer.alert(result.map.error)
+                            }
+                        })
+                    }
+                })
             })
         })
         function encryptStrByRsa(str,rsa){

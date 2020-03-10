@@ -28,7 +28,7 @@ public class AutoCodeBuild {
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
         dsc.setUrl("jdbc:mysql://localhost:3306/book?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull");
-        dsc.setDriverName("com.mysql.jdbc.Driver");
+        dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
         dsc.setPassword("Mysql!@#456");
         mpg.setDataSource(dsc);
@@ -69,7 +69,7 @@ public class AutoCodeBuild {
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         //表名
-        strategy.setInclude("rotation");
+        strategy.setInclude("action");
         mpg.setStrategy(strategy);
         mpg.execute();
     }

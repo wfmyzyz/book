@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../../../../backstage/layuiadmin/layui/css/layui.css" media="all">
     <script src="../../../../backstage/layuiadmin/layui/layui.js"></script>
     <script src="../../../../backstage/jquery/jquery-3.4.1.js"></script>
+    <script src="../../../../backstage/layuiadmin/jquery.cookie.js"></script>
     <script src="../../../../backstage/config.js"></script>
     <style>
         .message{
@@ -95,6 +96,7 @@
         var tableIns =table.render({
             elem: '#label'
             ,url: backRoot+'/back/admin/administrators/label/getList' //数据接口
+            ,headers: {"token":$.cookie("token")}
             ,page: true //开启分页
             ,cols: [[ //表头
                 {checkbox: true}
@@ -157,6 +159,7 @@
             $.ajax({
                 type: "post",
                 url: backRoot+"/back/admin/administrators/label/add",
+                headers: {"token":$.cookie("token")},
                 data: {name:$("#label-name").val(),introduce:$("#label-introduce").val()},
                 success: function (result) {
                     layer.closeAll("loading");
@@ -184,6 +187,7 @@
             $.ajax({
                 type: "post",
                 url: backRoot+"/back/admin/administrators/label/update",
+                headers: {"token":$.cookie("token")},
                 data: {name:$("#label-name").val(),introduce:$("#label-introduce").val(),labelId:$("#label-id").val()},
                 success: function (result) {
                     layer.closeAll("loading");
@@ -215,6 +219,7 @@
             $.ajax({
                 type: "get",
                 url: backRoot+"/back/admin/administrators/label/get/"+$(this).attr("data-id"),
+                headers: {"token":$.cookie("token")},
                 success: function (result) {
                     layer.closeAll("loading");
                     if(result.code == 200){
@@ -238,6 +243,7 @@
                 $.ajax({
                     type: "get",
                     url: backRoot + "/back/admin/administrators/label/remove/"+indexId,
+                    headers: {"token":$.cookie("token")},
                     success: function (result) {
                         layer.closeAll("loading");
                         if(result.code == 200){
@@ -268,6 +274,7 @@
                         type: "post",
                         url: backRoot + "/back/admin/administrators/label/remove",
                         contentType: "application/json; charset=utf-8",
+                        headers: {"token":$.cookie("token")},
                         data: JSON.stringify(arr),
                         success: function (result) {
                             layer.closeAll("loading");
@@ -301,6 +308,7 @@
         $.ajax({
             type: "post",
             url: backRoot + "/back/admin/administrators/label/getIsLabel",
+            headers: {"token":$.cookie("token")},
             data: {labelName:$("#label-name").val()},
             success: function (result) {
                 if (result.code == 200) {

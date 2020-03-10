@@ -13,6 +13,9 @@ import com.wfmyzyz.book.service.*;
 import com.wfmyzyz.book.utils.Msg;
 import com.wfmyzyz.book.vo.BookAboutVo;
 import com.wfmyzyz.book.vo.BookListVo;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +45,7 @@ public class BookIndexController {
      * 书籍列表
      * @return
      */
+    @ApiOperation(value="获取书籍列表", notes="获取书籍列表" ,httpMethod="GET")
     @GetMapping("list")
     public Msg getBookList(){
         Map<String,Object> map = new HashMap<>();
@@ -118,6 +122,7 @@ public class BookIndexController {
      * @param id
      * @return
      */
+    @ApiOperation(value="根据ID获取正本书详情", notes="根据ID获取正本书详情" ,httpMethod="GET")
     @GetMapping("getBook/{id}")
     public Msg getBookAboutByBookId(@PathVariable("id") Integer id){
         Book book = bookService.getById(id);
@@ -137,10 +142,11 @@ public class BookIndexController {
     }
 
     /**
-     * 获取书籍章回
+     * 获取书籍章回列表
      * @param id
      * @return
      */
+    @ApiOperation(value="根据ID获取书籍章回列表", notes="根据ID获取书籍章回列表" ,httpMethod="GET")
     @RequestMapping("bookSerialList/{id}")
     public Msg getBookSerial(@PathVariable("id") Integer id, @RequestParam("page") Integer page,
                              @RequestParam("limit") Integer limit){
@@ -160,6 +166,7 @@ public class BookIndexController {
      * @param serialId
      * @return
      */
+    @ApiOperation(value="根据ID获取书籍章回", notes="根据ID获取书籍章回" ,httpMethod="GET")
     @RequestMapping("getBookSerialText/{bookId}/{serialId}")
     public Msg getBookSerialText(@PathVariable("bookId") Integer bookId,@PathVariable("serialId") Integer serialId){
         Book book = bookService.getById(bookId);
@@ -180,6 +187,7 @@ public class BookIndexController {
      * 获取所有标签
      * @return
      */
+    @ApiOperation(value="获取所有标签", notes="获取所有标签" ,httpMethod="GET")
     @GetMapping("getAllLabel")
     public Msg getAllLabel(){
         List<Label> list = labelService.list(new QueryWrapper<Label>().eq("tb_status", "正常"));
@@ -190,6 +198,7 @@ public class BookIndexController {
      * 获取所有轮播图
      * @return
      */
+    @ApiOperation(value="获取所有轮播图", notes="获取所有轮播图" ,httpMethod="GET")
     @GetMapping("getRotationList")
     public Msg getRotationList(){
         QueryWrapper queryWrapper = new QueryWrapper();

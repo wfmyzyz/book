@@ -11,6 +11,7 @@ import com.wfmyzyz.book.service.IBookLabelService;
 import com.wfmyzyz.book.service.ILabelService;
 import com.wfmyzyz.book.utils.LayuiBackData;
 import com.wfmyzyz.book.utils.Msg;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ public class LabelController {
      * @param limit
      * @return
      */
+    @ApiOperation(value="分页获取标签列表")
     @RequestMapping(value = "getList",method = RequestMethod.GET)
     public LayuiBackData getList(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit, @RequestParam(value = "labelId",required = false) String labelId,
                                  @RequestParam(value = "name",required = false) String name, @RequestParam(value = "startTime",required = false) String startTime,
@@ -72,6 +74,7 @@ public class LabelController {
      * 获取所有的标签
      * @return
      */
+    @ApiOperation(value="获取标签列表")
     @RequestMapping(value = "getAllLabel",method = RequestMethod.GET)
     public Msg getAllLabel(){
         List<Label> labelList = labelService.list(new QueryWrapper<Label>().eq("tb_status","正常"));
@@ -87,6 +90,7 @@ public class LabelController {
      * @param bindingResult
      * @return
      */
+    @ApiOperation(value="添加标签")
     @RequestMapping(value = "add",method = RequestMethod.POST)
     public Msg layuiBackData(@Valid Label label, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
@@ -108,6 +112,7 @@ public class LabelController {
      * @param bindingResult
      * @return
      */
+    @ApiOperation(value="修改标签")
     @RequestMapping(value = "update",method = RequestMethod.POST)
     public Msg updateLabel(@Valid Label label, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
@@ -132,6 +137,7 @@ public class LabelController {
      * @param id
      * @return
      */
+    @ApiOperation(value="获取一条标签数据")
     @RequestMapping(value = "get/{id}",method = RequestMethod.GET)
     public Msg getLabel(@PathVariable("id") String id){
         Label label = labelService.getById(id);
@@ -146,6 +152,7 @@ public class LabelController {
      * @param id
      * @return
      */
+    @ApiOperation(value="删除单个标签")
     @Transactional
     @RequestMapping(value = "remove/{id}",method = RequestMethod.GET)
     public Msg removeLabel(@PathVariable("id") String id){
@@ -166,6 +173,7 @@ public class LabelController {
      * @param labelIds
      * @return
      */
+    @ApiOperation(value="批量删除标签")
     @Transactional
     @RequestMapping(value = "remove",method = RequestMethod.POST)
     public Msg removeBatchLabel(@RequestBody List<Label> labelIds){
@@ -228,6 +236,7 @@ public class LabelController {
      * @param labelName
      * @return
      */
+    @ApiOperation(value="查询标签名是否存在")
     @RequestMapping(value = "getIsLabel")
     public Msg getIsLabel(@RequestParam("labelName") String labelName){
         Label label = isLabel(labelName);

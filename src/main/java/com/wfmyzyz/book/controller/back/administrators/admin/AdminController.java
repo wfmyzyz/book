@@ -12,6 +12,9 @@ import com.wfmyzyz.book.service.impl.AdminRoleServiceImpl;
 import com.wfmyzyz.book.service.impl.AdminServiceImpl;
 import com.wfmyzyz.book.utils.LayuiBackData;
 import com.wfmyzyz.book.utils.Msg;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.validation.BindingResult;
@@ -48,6 +51,11 @@ public class AdminController {
      * @param endTime
      * @return
      */
+    @ApiOperation(value="查询管理员", notes="查询管理员" ,httpMethod="GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="page",value="page",required=true,paramType="Integer"),
+            @ApiImplicitParam(name="limit",value="limit",required=true,paramType="Integer")
+    })
     @RequestMapping(value = "getAdminList")
     public LayuiBackData getAdminList(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit, @RequestParam(value = "adminId",required = false) String adminId, @RequestParam(value = "adminname",required = false) String adminname,
                                       @RequestParam(value = "startTime",required = false) String startTime, @RequestParam(value = "endTime",required = false) String endTime){
@@ -67,10 +75,14 @@ public class AdminController {
     }
 
     /**
-     * 查询管理员是否存在
+     * 根据用户名查询管理员
      * @param adminname
      * @return
      */
+    @ApiOperation(value="根据用户名查询管理员", notes="根据用户名查询管理员" ,httpMethod="GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="adminname",value="adminname",required=true,paramType="query"),
+    })
     @RequestMapping(value = "getIsAdmin")
     public Msg getIsAdmin(@RequestParam("adminname") String adminname){
         boolean flag = isAdminLife(adminname);
@@ -86,6 +98,10 @@ public class AdminController {
      * @param bindingResult
      * @return
      */
+    @ApiOperation(value="根据用户名查询管理员", notes="根据用户名查询管理员" ,httpMethod="GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="adminname",value="adminname",required=true,paramType="query")
+    })
     @RequestMapping(value = "add",method = RequestMethod.POST)
     public Msg add(@Valid Admin admin, BindingResult bindingResult){
         if (bindingResult.hasErrors()){

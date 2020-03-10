@@ -1,7 +1,6 @@
 package com.wfmyzyz.book.interceptor;
 
 import com.alibaba.fastjson.JSONObject;
-import com.sun.deploy.net.HttpUtils;
 import com.wfmyzyz.book.config.ProjectConfig;
 import com.wfmyzyz.book.controller.api.BackLoginApiComponent;
 import com.wfmyzyz.book.utils.Msg;
@@ -17,7 +16,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
-import sun.net.www.http.HttpClient;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,8 +27,6 @@ public class ControllerBackInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(ControllerBackInterceptor.class);
 
-    @Autowired
-    private RestTemplate restTemplate;
     @Autowired
     private BackLoginApiComponent backLoginApiComponent;
 
@@ -44,6 +40,11 @@ public class ControllerBackInterceptor implements HandlerInterceptor {
             return true;
         }
         String token = request.getHeader(ProjectConfig.TOKEN_KEY);
-        return backLoginApiComponent.checkUserAuthority(token,requestURI,response);
+        UserBo userBo = backLoginApiComponent.checkUserAuthority(token, requestURI, response);
+        if (userBo == null){
+            return false;
+        }
+        request.setAttribute("user",userBo);
+        return true;
     }
 }

@@ -8,6 +8,9 @@ import com.wfmyzyz.book.domain.enums.BookSerialCheckEnum;
 import com.wfmyzyz.book.service.IBookSerialService;
 import com.wfmyzyz.book.service.IBookService;
 import com.wfmyzyz.book.utils.DownloadUtils;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -37,6 +40,7 @@ public class DownloadController {
      * 根据ID下载书籍
      * @return
      */
+    @ApiOperation(value="根据ID下载书籍", notes="根据ID下载书籍" ,httpMethod="GET")
     @GetMapping("book/{id}")
     public HttpServletResponse downloadBook(@PathVariable("id") Integer id, HttpServletResponse response){
         Book book = bookService.getById(id);

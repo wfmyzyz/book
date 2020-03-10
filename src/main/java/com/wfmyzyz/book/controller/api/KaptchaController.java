@@ -1,6 +1,9 @@
 package com.wfmyzyz.book.controller.api;
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,12 +16,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 
+/**
+ * @author admin
+ */
 @Controller
 public class KaptchaController {
 
     @Autowired
     DefaultKaptcha defaultKaptcha;
 
+    @ApiOperation(value="获取验证码", notes="获取验证码" ,httpMethod="GET")
     @RequestMapping(value = "/getVrifyCode",method = RequestMethod.GET)
     public void defaultKaptcha(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception{
         byte[] captchaChallengeAsJpeg = null;

@@ -9,6 +9,9 @@ import com.wfmyzyz.book.service.IBookSerialService;
 import com.wfmyzyz.book.service.IBookService;
 import com.wfmyzyz.book.utils.FileTools;
 import com.wfmyzyz.book.utils.Msg;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,6 +47,10 @@ public class UploadBookController {
      * @param file
      * @return
      */
+    @ApiOperation(value="上传书籍封面", notes="上传书籍封面" ,httpMethod="POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="file",value="file",required=true,paramType="MultipartFile")
+    })
     @RequestMapping(value = "book/uploadHead",method = RequestMethod.POST)
     public Msg uploadHead(@RequestParam("file") MultipartFile file){
         if (file.isEmpty()){
@@ -65,6 +72,10 @@ public class UploadBookController {
      * @param imagePath
      * @return
      */
+    @ApiOperation(value="删除书籍封面", notes="删除书籍封面" ,httpMethod="GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="imagePath",value="imagePath",required=true,paramType="String")
+    })
     @RequestMapping(value = "book/deleteHead",method = RequestMethod.POST)
     public Msg deleteHead(@RequestParam("imagePath") String imagePath){
         if (!imagePath.isEmpty()){
@@ -83,6 +94,10 @@ public class UploadBookController {
      * 上传书籍pdf
      * @return
      */
+    @ApiOperation(value="上传书籍pdf", notes="删除书籍封面" ,httpMethod="POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="file",value="file",required=true,paramType="MultipartFile")
+    })
     @RequestMapping(value = "book/uploadBookPdf",method = RequestMethod.POST)
     public Msg uploadBookPdf(@RequestParam("file") MultipartFile file){
         if (file.isEmpty()){
@@ -107,6 +122,10 @@ public class UploadBookController {
      * @param path
      * @return
      */
+    @ApiOperation(value="删除pdf书籍", notes="删除pdf书籍" ,httpMethod="POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="path",value="path",required=true,paramType="String")
+    })
     @RequestMapping(value = "book/deleteBookPdf",method = RequestMethod.POST)
     public Msg deleteBookPdf(@RequestParam("path") String path){
         if (StringUtils.isBlank(path)){
@@ -126,6 +145,10 @@ public class UploadBookController {
      * @param files
      * @return
      */
+    @ApiOperation(value="章回上传图片", notes="章回上传图片" ,httpMethod="POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="file",value="file",required=true,paramType="MultipartFile")
+    })
     @RequestMapping(value = "serial/uploadInto",method = RequestMethod.POST)
     public Map<String,Object> uploadInto(@RequestParam("file") MultipartFile[] files){
         Map<String,Object> map = new HashMap<>();
@@ -155,6 +178,10 @@ public class UploadBookController {
      * @param file
      * @return
      */
+    @ApiOperation(value="上传轮播图", notes="上传轮播图" ,httpMethod="POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="file",value="file",required=true,paramType="MultipartFile")
+    })
     @RequestMapping(value = "rotation/uploadRotation",method = RequestMethod.POST)
     public Msg uploadRotation(@RequestParam("file") MultipartFile file){
         if (file.isEmpty()){
@@ -173,10 +200,14 @@ public class UploadBookController {
 
 
     /**
-     * 上传文件
+     * 上传书籍文件
      * @param file
      * @return
      */
+    @ApiOperation(value="上传书籍文件", notes="上传书籍文件" ,httpMethod="POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="file",value="file",required=true,paramType="MultipartFile")
+    })
     @PostMapping("uploadBook")
     @Transactional
     public Msg uploadBook(@RequestParam("file") MultipartFile file){

@@ -9,6 +9,7 @@ import com.wfmyzyz.book.domain.Rotation;
 import com.wfmyzyz.book.service.IRotationService;
 import com.wfmyzyz.book.utils.LayuiBackData;
 import com.wfmyzyz.book.utils.Msg;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -43,6 +44,7 @@ public class RotationController {
      * @param url
      * @return
      */
+    @ApiOperation(value="分页获取轮播图列表")
     @RequestMapping("/getRotationList")
     public LayuiBackData getRotationList(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit,@RequestParam(value = "title",required = false) String title,
                                          @RequestParam(value = "url",required = false) String url){
@@ -63,6 +65,7 @@ public class RotationController {
      * @param rotation
      * @return
      */
+    @ApiOperation(value="添加轮播图")
     @RequestMapping("add")
     public Msg add(@Valid Rotation rotation, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
@@ -81,6 +84,7 @@ public class RotationController {
      * @param bindingResult
      * @return
      */
+    @ApiOperation(value="修改轮播图")
     @RequestMapping("update")
     public Msg update(@Valid Rotation rotation,BindingResult bindingResult){
         if (bindingResult.hasErrors()){
@@ -98,6 +102,7 @@ public class RotationController {
      * @param id
      * @return
      */
+    @ApiOperation(value="根据ID获取轮播图")
     @RequestMapping("get/{id}")
     public Msg get(@PathVariable("id") Integer id){
         Rotation rotation = rotationService.getById(id);
@@ -109,6 +114,7 @@ public class RotationController {
      * @param id
      * @return
      */
+    @ApiOperation(value="删除轮播图")
     @GetMapping(value = "remove/{id}")
     public Msg remove(@PathVariable("id") String id){
         Rotation rotation = rotationService.getById(id);
@@ -125,6 +131,7 @@ public class RotationController {
      * @param rotationList
      * @return
      */
+    @ApiOperation(value="批量删除轮播图")
     @PostMapping(value = "remove")
     public Msg removeBatch(@RequestBody List<Rotation> rotationList){
         rotationList.forEach(e->e.setTbStatus("删除"));

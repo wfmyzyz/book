@@ -10,6 +10,9 @@ import com.wfmyzyz.book.utils.Md5Utils;
 import com.wfmyzyz.book.utils.RedisUtils;
 import com.wfmyzyz.book.utils.RequestTools;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.DigestUtils;
@@ -49,6 +52,13 @@ public class AdminBackLoginController {
      * @param response
      * @return
      */
+    @ApiOperation(value="用户登录", notes="用户登录" ,httpMethod="POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="adminname",value="adminname",required=true,paramType="String"),
+            @ApiImplicitParam(name="password",value="password",required=true,paramType="String"),
+            @ApiImplicitParam(name="vrifyCode",value="vrifyCode",required=true,paramType="String"),
+            @ApiImplicitParam(name="rememberMe",value="rememberMe",required=true,paramType="Boolean")
+    })
     @RequestMapping(value = "adminLogin",method = RequestMethod.POST)
     public String adminLogin(@RequestParam("adminname") String adminname, @RequestParam("password") String password, @RequestParam("vrifyCode") String vrifyCode, @RequestParam("rememberMe") boolean rememberMe,
                              HttpServletRequest request, HttpServletResponse response){

@@ -13,6 +13,9 @@ import com.wfmyzyz.book.service.ILabelService;
 import com.wfmyzyz.book.utils.LayuiBackData;
 import com.wfmyzyz.book.utils.Msg;
 import com.wfmyzyz.book.vo.BookListVo;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,6 +48,12 @@ public class BookApiController {
      * @param labels
      * @return
      */
+    @ApiOperation(value="根据标签获取书籍列表", notes="根据标签获取书籍列表" ,httpMethod="POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="labels",value="labels",required=true,paramType="List<String>"),
+            @ApiImplicitParam(name="page",value="page",required=true,paramType="Integer"),
+            @ApiImplicitParam(name="limit",value="limit",required=true,paramType="Integer")
+    })
     @RequestMapping("getBookListByLabelList")
     public LayuiBackData getBookListByLabelList(@RequestParam("labels") List<String> labels, @RequestParam("page") Integer page,@RequestParam("limit") Integer limit){
         IPage<BookListVo> pages = new Page<>();

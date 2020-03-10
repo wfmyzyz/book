@@ -27,4 +27,8 @@ public class ProjectConfig {
     public final static String TOKEN = "token:";
     public final static String USER = "user:";
 
+    /**
+     * 用户地址
+     */
+    public static final String USER_PATH = "http://127.0.0.1:9090/user";
 }

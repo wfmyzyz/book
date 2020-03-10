@@ -16,6 +16,7 @@ import com.wfmyzyz.book.service.impl.BookLabelServiceImpl;
 import com.wfmyzyz.book.service.impl.BookServiceImpl;
 import com.wfmyzyz.book.utils.LayuiBackData;
 import com.wfmyzyz.book.utils.Msg;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +61,7 @@ public class BookController {
      * @param endTime
      * @return
      */
+    @ApiOperation(value="分页获取书籍列表")
     @RequestMapping(value = "getBookList",method = RequestMethod.GET)
     public LayuiBackData getArticleList(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit, @RequestParam(value = "bookId",required = false) String bookId,
                                         @RequestParam(value = "title",required = false) String name, @RequestParam(value = "startTime",required = false) String startTime,
@@ -86,6 +88,7 @@ public class BookController {
      * @param labelIds
      * @return
      */
+    @ApiOperation(value="添加书籍")
     @Transactional
     @RequestMapping(value = "add",method = RequestMethod.POST)
     public Msg add(@Valid Book book, BindingResult bindingResult, String labelIds, HttpServletRequest request){
@@ -131,6 +134,7 @@ public class BookController {
      * @param labelIds
      * @return
      */
+    @ApiOperation(value="修改书籍")
     @Transactional
     @RequestMapping(value = "update",method = RequestMethod.POST)
     public Msg update(@Valid Book book, BindingResult bindingResult, String labelIds, HttpServletRequest request){
@@ -174,6 +178,7 @@ public class BookController {
      * @param id
      * @return
      */
+    @ApiOperation(value="删除书籍")
     @Transactional
     @RequestMapping(value = "remove/{id}",method = RequestMethod.GET)
     public Msg remove(@PathVariable("id") Integer id){
@@ -203,6 +208,7 @@ public class BookController {
      * @param bookList
      * @return
      */
+    @ApiOperation(value="批量删除书籍")
     @Transactional
     @RequestMapping(value = "remove",method = RequestMethod.POST)
     public Msg removeBatch(@RequestBody List<Book> bookList){
@@ -227,6 +233,7 @@ public class BookController {
      * @param id
      * @return
      */
+    @ApiOperation(value="根据ID获取书籍")
     @RequestMapping(value = "get/{id}",method = RequestMethod.GET)
     public Msg getBook(@PathVariable("id") String id){
         Book book = bookServiceImpl.getById(id);
@@ -240,6 +247,7 @@ public class BookController {
      * 判断书籍名是否存在
      * @return
      */
+    @ApiOperation(value="根据书籍名获取书籍")
     @RequestMapping(value = "getIsBook",method = RequestMethod.GET)
     public Msg getIsBook(@RequestParam("bookName") String bookName){
         if (isBook(bookName) == null){
@@ -263,6 +271,7 @@ public class BookController {
      * @param id
      * @return
      */
+    @ApiOperation(value="修改书籍审核")
     @GetMapping("updateBookCheck/{id}")
     public Msg updateBookCheck(@PathVariable("id") Integer id){
         Book book = bookServiceImpl.getById(id);

@@ -8,8 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="../../../backstage/layuiadmin/layui/css/layui.css" media="all">
     <script src="../../../backstage/layuiadmin/layui/layui.js"></script>
-    <script src="../../../backstage/layuiadmin/jquery.cookie.js"></script>
     <script src="../../../backstage/jquery/jquery-3.4.1.js"></script>
+    <script src="../../../backstage/layuiadmin/jquery.cookie.js"></script>
     <script src="../../../backstage/config.js"></script>
     <style>
         .head-btn{
@@ -295,27 +295,6 @@
                 }
             })
         });
-        $("#book-title").blur(function () {
-            if (GetQueryString("bookId") != null) {
-                return;
-            }
-            if ($.trim($("#book-title").val()) == "") {
-                return;
-            }
-            $.ajax({
-                type: "get",
-                url: backRoot + "/back/admin/book/book/getIsBook",
-                headers: {"token":$.cookie("token")},
-                data: {bookName:$("#book-title").val()},
-                success: function (result) {
-                    if (result.code === 200) {
-                        $("#book-name-label").text("该书籍名可使用！").css("color","green");
-                        return;
-                    }
-                    $("#book-name-label").text(result.map.error).css("color","red");
-                }
-            })
-        })
     </script>
     <script>
         $("#add-label").click(function () {
