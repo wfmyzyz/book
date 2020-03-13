@@ -11,6 +11,7 @@
     <script src="../../../backstage/layuiadmin/layui/layui.js"></script>
     <script src="../../../backstage/jquery/jquery-3.4.1.js"></script>
     <script src="../../../backstage/config.js"></script>
+    <script src="../../backstage/layuiadmin/jquery.cookie.js"></script>
     <link href="../../../index/css/header.css" rel="stylesheet">
     <link href="../../../index/css/footer.css" rel="stylesheet">
     <style>
@@ -64,17 +65,19 @@
                     </ul>
                 </div>
                 <div class="login">
-                    <a href="#">注册</a>
-                    <span>|</span>
-                    <a href="#">登录</a>
+                    <a href="../login.html">登录</a>
+                </div>
+                <div class="login-success">
+                    <a href="#">个人中心</a>
                 </div>
                 <div class="search">
-                    <input type="text" name="name" placeholder="请输入…" autocomplete="off" class="layui-input">
+                    <input id="search-name" type="text" name="name" placeholder="请输入…" autocomplete="off" class="layui-input">
                     <span class="search-btn layui-icon-search layui-icon"></span>
                 </div>
             </div>
         </div>
     </header>
+    <script src="../../../backstage/judgeLogin.js"></script>
     <section>
         <div class="box">
             <div class="nav">
@@ -125,6 +128,12 @@
                     $("#book-text").html(result.map.data.bookSerial.text)
                 }
             }
+        })
+        $(".search-btn").click(function () {
+            if ($.trim(($("#search-name").val())) == ""){
+                return
+            }
+            window.location.href = "/index/bookStock/index.html?bookName="+$("#search-name").val();
         })
         function GetQueryString(name)
         {

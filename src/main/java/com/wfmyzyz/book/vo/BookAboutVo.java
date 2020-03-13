@@ -14,6 +14,7 @@ public class BookAboutVo implements Serializable {
 
     private Book book;
     private List<Label> labelList;
+    private boolean collect;
 
     public Book getBook() {
         return book;
@@ -29,5 +30,13 @@ public class BookAboutVo implements Serializable {
 
     public void setLabelList(List<Label> labelList) {
         this.labelList = labelList;
+    }
+
+    public boolean isCollect() {
+        return collect;
+    }
+
+    public void setCollect(boolean collect) {
+        this.collect = collect;
     }
 }

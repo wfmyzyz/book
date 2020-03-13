@@ -11,6 +11,7 @@
     <script src="../../backstage/layuiadmin/layui/layui.js"></script>
     <script src="../../backstage/jquery/jquery-3.4.1.js"></script>
     <script src="../../backstage/config.js"></script>
+    <script src="../backstage/layuiadmin/jquery.cookie.js"></script>
     <link href="../../index/css/header.css" rel="stylesheet">
     <link href="../../index/css/footer.css" rel="stylesheet">
     <style>
@@ -131,17 +132,19 @@
                     </ul>
                 </div>
                 <div class="login">
-                    <a href="#">注册</a>
-                    <span>|</span>
-                    <a href="#">登录</a>
+                    <a href="./login.html">登录</a>
+                </div>
+                <div class="login-success">
+                    <a href="#">个人中心</a>
                 </div>
                 <div class="search">
-                    <input type="text" name="name" placeholder="请输入…" autocomplete="off" class="layui-input">
+                    <input id="search-name" type="text" name="name" placeholder="请输入…" autocomplete="off" class="layui-input">
                     <span class="search-btn layui-icon-search layui-icon"></span>
                 </div>
             </div>
         </div>
     </header>
+    <script src="../../backstage/judgeLogin.js"></script>
     <section>
         <div class="box">
             <div class="layui-carousel" id="carousel">
@@ -202,12 +205,24 @@
         layui.use(['form','carousel'], function(){
             var form = layui.form;
             var carousel = layui.carousel;
-            carousel.render({
+            var inc = carousel.render({
                 elem: '#carousel'
                 ,width: '100%' //设置容器宽度
                 ,arrow: 'always' //始终显示箭头
                 //,anim: 'updown' //切换动画方式
             });
+            $.ajax({
+                type: "get",
+                url: backRoot + "/index/getRotationList",
+                success: function (result) {
+                    var txt = ""
+                    for(var i=0;i<result.map.data.length;i++){
+                        txt += '<div><a href="'+result.map.data[i].url+'" target="_blank"><img src="'+result.map.data[i].imagePath+'" /></a></div>'
+                    }
+                    $("#carousel-div").html(txt)
+                    inc.reload({elem: '#carousel'});
+                }
+            })
         });
         $.ajax({
             type: "get",
@@ -222,6 +237,12 @@
                 $(".praise-card").html(praiseTxt);
                 $(".over-card").html(overTxt);
             }
+        })
+        $(".search-btn").click(function () {
+            if ($.trim(($("#search-name").val())) == ""){
+                return
+            }
+            window.location.href = "/index/bookStock/index.html?bookName="+$("#search-name").val();
         })
         function getTxt(result){
             var txt = '';
@@ -260,17 +281,6 @@
                 }
                 txt += '<div class="clear"></div>';
                 $(".label-list").html(txt)
-            }
-        })
-        $.ajax({
-            type: "get",
-            url: backRoot + "/index/getRotationList",
-            success: function (result) {
-                var txt = ""
-                for(var i=0;i<result.map.data.length;i++){
-                    txt += '<div><a href="'+result.map.data[i].url+'" target="_blank"><img src="'+result.map.data[i].imagePath+'" /></a></div>'
-                }
-                $("#carousel-div").html(txt)
             }
         })
     </script>

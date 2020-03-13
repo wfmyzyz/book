@@ -85,3 +85,13 @@ header .box .right .search .search-btn{
     line-height: 40px;
     cursor: pointer;
 }
+.login-hidden{
+    display: none;
+}
+.login-success{
+    float: right;
+    line-height: 45px;
+}
+.login-success a{
+    color: #fff;
+}

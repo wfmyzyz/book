@@ -20,6 +20,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,8 @@ public class BookIndexController {
     IBookSerialService bookSerialService;
     @Autowired
     IRotationService rotationService;
+    @Autowired
+    private ICollectService collectService;
 
     /**
      * 书籍列表
@@ -124,7 +128,7 @@ public class BookIndexController {
      */
     @ApiOperation(value="根据ID获取正本书详情", notes="根据ID获取正本书详情" ,httpMethod="GET")
     @GetMapping("getBook/{id}")
-    public Msg getBookAboutByBookId(@PathVariable("id") Integer id){
+    public Msg getBookAboutByBookId(@PathVariable("id") Integer id, HttpServletRequest request){
         Book book = bookService.getById(id);
         if (book == null || Objects.equals(book.getBookCheck(),BookCheckEnum.下架.toString()) || Objects.equals(book.getTbStatus(),"删除")){
             return Msg.error().add("error","该书不存在！");
@@ -138,6 +142,18 @@ public class BookIndexController {
         BookAboutVo bookAboutVo = new BookAboutVo();
         bookAboutVo.setBook(book);
         bookAboutVo.setLabelList(labelList);
+        book.setBrowse((Integer.parseInt(book.getBrowse())+1)+"");
+        bookService.updateById(book);
+        HttpSession session = request.getSession();
+        Object userIdObj = session.getAttribute("userId");
+        bookAboutVo.setCollect(false);
+        if (userIdObj != null){
+            Integer userId = Integer.parseInt(userIdObj.toString());
+            Collect collectByUserIdAndBookId = collectService.getCollectByUserIdAndBookId(book.getBookId(),userId);
+            if (collectByUserIdAndBookId != null){
+                bookAboutVo.setCollect(true);
+            }
+        }
         return Msg.success().add("data",bookAboutVo);
     }
 

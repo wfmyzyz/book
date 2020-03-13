@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>个人中心</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../backstage/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../backstage/layuiadmin/style/admin.css" media="all">
+    <script src="../../../backstage/layuiadmin/layui/layui.js"></script>
+    <script src="../../../backstage/jquery/jquery-3.4.1.js"></script>
+    <script src="../../../backstage/config.js"></script>
+    <script src="../../backstage/layuiadmin/jquery.cookie.js"></script>
+    <link href="../../../index/css/header.css" rel="stylesheet">
+    <link href="../../../index/css/footer.css" rel="stylesheet">
+    <style>
+        .person-message{
+            width: 800px;
+            margin: 80px auto 0;
+        }
+        .collect-box{
+            height: 600px;
+        }
+        .book{
+            height: 155px;
+            width: 120px;
+            border: 1px solid #fff;
+            float: left;
+            margin: 10px 15.8px;
+        }
+        .book-img{
+            width: 120px;
+            height: 135px;
+            overflow: hidden;
+        }
+        .book img{
+            width: 100%;
+            height: 100%;
+            transition: all 0.3s linear;
+        }
+        .book:hover .book-name{
+            color: #0000FF;
+        }
+        .book:hover img{
+            transform: scale(1.1,1.1);
+        }
+        .book-name{
+            display: block;
+            text-align: center;
+        }
+        .clear{
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="box">
+        <div class="left">
+            <a href="#">网络书库</a>
+        </div>
+        <div class="right">
+            <div class="nav">
+                <ul>
+                    <a href="/index/index.html"><li>首页</li></a>
+                    <a href="/index/ranking/index.html"><li>排行</li></a>
+                    <a href="/index/bookStock/index.html"><li>书库</li></a>
+                </ul>
+            </div>
+            <div class="login">
+                <a href="../login.html">登录</a>
+            </div>
+            <div class="login-success">
+                <a href="#">个人中心</a>
+            </div>
+            <div class="search">
+                <input id="search-name" type="text" name="name" placeholder="请输入…" autocomplete="off" class="layui-input">
+                <span class="search-btn layui-icon-search layui-icon"></span>
+            </div>
+        </div>
+    </div>
+</header>
+<script src="../../../backstage/judgeLogin.js"></script>
+<section>
+    <div class="person-message">
+        <div class="layui-collapse">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title username">个人详情</h2>
+                <div class="layui-colla-content layui-show">
+                    <div class="layui-row">
+                        <div class="layui-col-md6">
+                            <label for="username">用户名：</label><span id="username">杜甫</span>
+                        </div>
+                        <div class="layui-col-md6">
+                            <button type="button" class="layui-btn layui-btn-sm update-password">修改密码</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h3 style="margin: 50px 0 20px">收藏的书籍</h3>
+        <div class="collect-box">
+            <div class="layui-collapse">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title username">书籍</h2>
+                    <div class="layui-colla-content layui-show">
+                        <div class="collect-list">
+                            <ul class="book-ul">
+                                <li class="book">
+                                    <a href="#">
+                                        <div class="book-img">
+                                            <img class="book-url" src="/backstage/login/images/bg.jpg" alt="">
+                                        </div>
+                                        <span class="book-name">123</span>
+                                    </a>
+                                </li>
+                                <li class="book">
+                                    <a href="#">
+                                        <div class="book-img">
+                                            <img class="book-url" src="/backstage/login/images/bg.jpg" alt="">
+                                        </div>
+                                        <span class="book-name">123</span>
+                                    </a>
+                                </li>
+                                <li class="book">
+                                    <a href="#">
+                                        <div class="book-img">
+                                            <img class="book-url" src="/backstage/login/images/bg.jpg" alt="">
+                                        </div>
+                                        <span class="book-name">123</span>
+                                    </a>
+                                </li>
+                                <li class="book">
+                                    <a href="#">
+                                        <div class="book-img">
+                                            <img class="book-url" src="/backstage/login/images/bg.jpg" alt="">
+                                        </div>
+                                        <span class="book-name">123</span>
+                                    </a>
+                                </li>
+                                <li class="book">
+                                    <a href="#">
+                                        <div class="book-img">
+                                            <img class="book-url" src="/backstage/login/images/bg.jpg" alt="">
+                                        </div>
+                                        <span class="book-name">123</span>
+                                    </a>
+                                </li>
+                                <li class="book">
+                                    <a href="#">
+                                        <div class="book-img">
+                                            <img class="book-url" src="/backstage/login/images/bg.jpg" alt="">
+                                        </div>
+                                        <span class="book-name">123</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="article-box" style="padding:20px;display: none">
+    <div class="layui-form">
+        <input type="hidden" id="user-id" />
+        <div class="layui-form-item">
+            <label class="layui-form-label">旧密码</label>
+            <div class="layui-input-block">
+                <input type="text" id="oldPassword" name="oldPassword" required  placeholder="请输入旧密码" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">新密码</label>
+            <div class="layui-input-block">
+                <input name="newPassword" id="newPassword" placeholder="请输入新密码" class="layui-input" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <button class="layui-btn update-btn" style="float: right" data-opt="add">修改</button>
+        </div>
+    </div>
+</div>
+<footer>
+    <div class="box">
+        <hr class="layui-bg-gray">
+        <div class="about">
+            <span>© 2019 <a href="#">网络书库</a> 邮件：44444444@test.org</span>
+        </div>
+        <div class="height"></div>
+    </div>
+</footer>
+<script>
+    var articleBox;
+    layui.use(['element','form','layer'], function(){
+        $(document).on("click",".update-password",function () {
+            clearForm();
+            articleBox = layer.open({
+                type: 1,
+                content: $('#article-box'),
+                area: ['600px', '250px'],
+                title: "密码修改"
+            });
+        })
+    })
+    function clearForm() {
+        $("#oldPassword").val("")
+        $("#newPassword").val("")
+    }
+</script>
+</body>
+</html>

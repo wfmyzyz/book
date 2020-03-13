@@ -11,6 +11,7 @@
     <script src="../../../backstage/layuiadmin/layui/layui.js"></script>
     <script src="../../../backstage/jquery/jquery-3.4.1.js"></script>
     <script src="../../../backstage/config.js"></script>
+    <script src="../../backstage/layuiadmin/jquery.cookie.js"></script>
     <link href="../../../index/css/header.css" rel="stylesheet">
     <link href="../../../index/css/footer.css" rel="stylesheet">
     <style>
@@ -119,17 +120,19 @@
                 </ul>
             </div>
             <div class="login">
-                <a href="#">注册</a>
-                <span>|</span>
-                <a href="#">登录</a>
+                <a href="../login.html">登录</a>
+            </div>
+            <div class="login-success">
+                <a href="#">个人中心</a>
             </div>
             <div class="search">
-                <input type="text" name="name" placeholder="请输入…" autocomplete="off" class="layui-input">
+                <input id="search-name" type="text" name="name" placeholder="请输入…" autocomplete="off" class="layui-input">
                 <span class="search-btn layui-icon-search layui-icon"></span>
             </div>
         </div>
     </div>
 </header>
+    <script src="../../../backstage/judgeLogin.js"></script>
     <section>
         <div class="box">
             <div class="nav">
@@ -147,23 +150,23 @@
             <div class="book-list">
                 <div class="book-ranking">
                     <h3>新书风云榜</h3>
-                    <ul>
+                    <ul id="newBook">
                         <a href="#"><li>1.至尊无敌</li></a>
                         <a href="#"><li>1.至尊无敌</li></a>
                         <a href="#"><li>1.至尊无敌</li></a>
                     </ul>
                 </div>
-                <div class="book-ranking">
-                    <h3>24小时热搜榜</h3>
-                    <ul>
-                        <a href="#"><li>1.至尊无敌</li></a>
-                        <a href="#"><li>1.至尊无敌</li></a>
-                        <a href="#"><li>1.至尊无敌</li></a>
-                    </ul>
-                </div>
+<!--                <div class="book-ranking">-->
+<!--                    <h3>24小时热搜榜</h3>-->
+<!--                    <ul>-->
+<!--                        <a href="#"><li>1.至尊无敌</li></a>-->
+<!--                        <a href="#"><li>1.至尊无敌</li></a>-->
+<!--                        <a href="#"><li>1.至尊无敌</li></a>-->
+<!--                    </ul>-->
+<!--                </div>-->
                 <div class="book-ranking">
                     <h3>阅读指数榜</h3>
-                    <ul>
+                    <ul id="readBook">
                         <a href="#"><li>1.至尊无敌</li></a>
                         <a href="#"><li>1.至尊无敌</li></a>
                         <a href="#"><li>1.至尊无敌</li></a>
@@ -171,7 +174,7 @@
                 </div>
                 <div class="book-ranking">
                     <h3>收藏榜</h3>
-                    <ul>
+                    <ul id="collectBook">
                         <a href="#"><li>1.至尊无敌</li></a>
                         <a href="#"><li>1.至尊无敌</li></a>
                         <a href="#"><li>1.至尊无敌</li></a>
@@ -195,17 +198,54 @@
         });
     </script>
     <script>
-        $(document).on("click",".label",function () {
-            $(".search-label-list").append('<i class="search-label">'+$(this).text()+'<strong class="layui-icon layui-icon-close label-close"></strong></i>')
+        $(document).on("click","#type-list i",function () {
+            $(".label-on").removeClass("label-on");
+            $(this).addClass("label-on");
+            var label  = $(this).text();
+            $.ajax({
+                type: "get",
+                url: backRoot + "/api/book/ranking",
+                data: {"label":label},
+                success: function (result) {
+                    xianshi(result)
+                }
+            })
         })
-        $(document).on("click",".search-label",function () {
-            $(this).remove()
+        $.ajax({
+            type: "post",
+            url: backRoot + "/api/book/ranking",
+            data: {"label":"全部"},
+            success: function (result) {
+                xianshi(result);
+            }
+        })
+        function xianshi(result){
+            var newTxt = "";
+            var readTxt = "";
+            var collectTxt = "";
+            for (var i=0;i<result.map.data.newBook.length;i++){
+                newTxt += '<a href="/index/index/bookAbout.html?bookId='+result.map.data.newBook[i].bookId+'"><li>'+(i+1)+'.'+result.map.data.newBook[i].name+'</li></a>';
+            }
+            for (var i=0;i<result.map.data.readBook.length;i++){
+                readTxt += '<a href="/index/index/bookAbout.html?bookId='+result.map.data.readBook[i].bookId+'"><li>'+(i+1)+'.'+result.map.data.readBook[i].name+'</li></a>';
+            }
+            for (var i=0;i<result.map.data.collectBook.length;i++){
+                collectTxt += '<a href="/index/index/bookAbout.html?bookId='+result.map.data.collectBook[i].bookId+'"><li>'+(i+1)+'.'+result.map.data.collectBook[i].name+'</li></a>';
+            }
+            $("#newBook").html(newTxt);
+            $("#collectBook").html(collectTxt);
+            $("#readBook").html(readTxt);
+        }
+        $(".search-btn").click(function () {
+            if ($.trim(($("#search-name").val())) == ""){
+                return
+            }
+            window.location.href = "/index/bookStock/index.html?bookName="+$("#search-name").val();
         })
         $.ajax({
             url: backRoot + "/api/label/getAllLabel",
             type: "get",
             success: function (result) {
-                console.log(result)
                 var txt = "<i class='label label-on'>全部</i>"
                 for(var i=0;i<result.map.data.length;i++){
                     txt += '<i class="label">'+result.map.data[i].name+'</i>';

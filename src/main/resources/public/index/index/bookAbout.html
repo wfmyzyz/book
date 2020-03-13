@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../../../backstage/layuiadmin/style/admin.css" media="all">
     <script src="../../../backstage/layuiadmin/layui/layui.js"></script>
     <script src="../../../backstage/jquery/jquery-3.4.1.js"></script>
+    <script src="../../backstage/layuiadmin/jquery.cookie.js"></script>
     <script src="../../../backstage/config.js"></script>
     <link href="../../../index/css/header.css" rel="stylesheet">
     <link href="../../../index/css/footer.css" rel="stylesheet">
@@ -92,8 +93,12 @@
             border: 1px solid #666;
             border-radius: 10px;
         }
-        section .box .book .about .book-action .action-btn:hover{
+        section .box .book .about .book-action .action-btn:hover:not(.collection-btn-active){
             background: #eee;
+        }
+        section .box .book .about .book-action .collection-btn-active{
+            background: darkred;
+            color: #fff;
         }
         section .box .book-message{
             margin-top: 80px;
@@ -123,17 +128,19 @@
                 </ul>
             </div>
             <div class="login">
-                <a href="#">注册</a>
-                <span>|</span>
-                <a href="#">登录</a>
+                <a href="../login.html">登录</a>
+            </div>
+            <div class="login-success">
+                <a href="#">个人中心</a>
             </div>
             <div class="search">
-                <input type="text" name="name" placeholder="请输入…" autocomplete="off" class="layui-input">
+                <input id="search-name" type="text" name="name" placeholder="请输入…" autocomplete="off" class="layui-input">
                 <span class="search-btn layui-icon-search layui-icon"></span>
             </div>
         </div>
     </div>
 </header>
+    <script src="../../../backstage/judgeLogin.js"></script>
     <section>
         <div class="box">
             <div class="nav">
@@ -143,7 +150,7 @@
                 </span>
             </div>
             <div class="book">
-                <img id="book-img" src="../../../back/login/images/bg.jpg" alt="">
+                <img id="book-img" src="../../../backstage/login/images/bg.jpg" alt="">
                 <div class="about">
                     <div class="title"><span class="name" id="book-name">测试书籍</span><span class="author" id="book-author">测试人</span>著</div>
                     <div class="label" id="book-label">
@@ -224,6 +231,11 @@
             window.open("/download/book/"+GetQueryString("bookId"));
         })
         $("#praise").click(function () {
+            $.ajax({
+                url: backRoot + "/likes/book",
+                type: "post",
+                data: {'bookId':GetQueryString("bookId")}
+            })
             if($(this).attr("data-is") == "true"){
                 $(this).css("color","RGB(102,102,102)");
                 $(this).attr("data-is","false");
@@ -242,13 +254,44 @@
                 $("#book-praise").text(parseInt($("#book-praise").text())+1);
             }
         })
+        $(".collection-btn").click(function () {
+            $.ajax({
+                url: backRoot + "/collect/book",
+                type: "post",
+                data: {"bookId":GetQueryString("bookId")},
+                success: function (result) {
+                    if (result.code == 200){
+                        if (result.map.data.type === 0){
+                            layer.tips('取消成功', '#praise', {
+                                time: 500,
+                                tips: [1,"#666"]
+                            });
+                            $(".collection-btn").removeClass("collection-btn-active");
+                            $(".collection-btn").text("加入收藏");
+                        }else {
+                            layer.tips('收藏成功', '#praise', {
+                                time: 500,
+                                tips: [1,"#666"]
+                            });
+                            $(".collection-btn").addClass("collection-btn-active");
+                            $(".collection-btn").text("取消收藏");
+                        }
+                    }
+                }
+            })
+        })
+        $(".search-btn").click(function () {
+            if ($.trim(($("#search-name").val())) == ""){
+                return
+            }
+            window.location.href = "/index/bookStock/index.html?bookName="+$("#search-name").val();
+        })
     </script>
     <script>
         $.ajax({
             type: "get",
             url: backRoot + "/index/getBook/"+GetQueryString("bookId"),
             success: function (result) {
-                console.log(result)
                 var book = result.map.data.book;
                 $("#book-img").attr("src",book.headImage);
                 $("#book-name").text(book.name);
@@ -267,6 +310,10 @@
                     $(".ready-btn").attr("data-url",book.uploadUrl)
                 }else {
                     $(".ready-btn").attr("data-type","章回")
+                }
+                if (result.map.data.collect){
+                    $(".collection-btn").addClass("collection-btn-active");
+                    $(".collection-btn").text("取消收藏");
                 }
             }
         })
