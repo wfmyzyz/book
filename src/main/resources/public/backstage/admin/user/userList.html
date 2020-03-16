@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../backstage/layuiadmin/layui/css/layui.css" media="all">
+    <script src="../../../backstage/layuiadmin/layui/layui.js"></script>
+    <script src="../../../backstage/jquery/jquery-3.4.1.js"></script>
+    <script src="../../../backstage/layuiadmin/jquery.cookie.js"></script>
+    <script src="../../../backstage/config.js"></script>
+</head>
+<body>
+    <div class="layui-fluid">
+        <div id="head" style="margin-top: 10px">
+            <button class="layui-btn add-btn">添加用户</button>
+            <button class="layui-btn layui-btn-danger remove-btn" style="margin-right: 20px">删除用户</button>
+            <div class="layui-inline">
+                <div class="layui-inline">
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="search-username"  placeholder="请输入用户名" class="layui-input">
+                    </div>
+                </div>
+                <button class="layui-btn search-result layui-btn-warm">搜索</button>
+                <button class="layui-btn search-back layui-btn-normal">返回</button>
+            </div>
+        </div>
+        <table id="table" lay-filter="table"></table>
+    </div><!--layui-form-item-->
+    <div id="box" style="padding:20px;display: none">
+        <div class="layui-form">
+            <input type="hidden" id="result-id" />
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-block">
+                    <input type="text" id="result-username" name="username" required  placeholder="请输入用户名" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-block">
+                    <input type="text" id="result-password" name="password" required  placeholder="请输入密码" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <button class="layui-btn add-submit" style="float: right" data-opt="add">添加</button>
+            </div>
+        </div>
+    </div>
+    <script type="text/html" id="tools">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script>
+    <script>
+        var articleBox;
+        var finishPage;
+        var indexPage;
+        layui.use(['table','laydate'], function() {
+            var table = layui.table;
+            var laydate = layui.laydate;
+            laydate.render({
+                elem: '#search-start-time' //指定元素
+            });
+            laydate.render({
+                elem: '#search-end-time' //指定元素
+            });
+            var tableIns =table.render({
+                elem: '#table'
+                ,url: backRoot+'/back/user/getUserList' //数据接口
+                ,headers: {"token":$.cookie("token")}
+                ,page: true //开启分页
+                ,cols: [[ //表头
+                    {checkbox: true}
+                    ,{field: 'id', title: '用户ID', sort: true,align: "center"}
+                    ,{field: 'username', title: '用户名',align: "center"}
+                    ,{field: 'password', title: '密码',align: "center"}
+                    ,{field: 'createTime', title: '创建时间',align: "center"}
+                    ,{field: 'updateTime', title: '更改时间',align: "center"}
+                    ,{field: 'tbStatus', title: '标签状态',align: "center"}
+                    , {title: '操作', align: "center", toolbar: '#tools'}
+                ]],
+                done: function (res, curr, count) {
+                    if (count%10==0){
+                        count++;
+                    }
+                    finishPage = Math.ceil(count/parseInt($(".layui-laypage-limits").find("option:selected").val()));
+                    indexPage = curr;
+                }
+            })
+            $(document).on("click",".search-result",function () {
+                tableIns.reload({
+                    where: { //设定异步数据接口的额外参数，任意设
+                        username: $("#search-username").val()
+                    }
+                })
+            })
+            $(document).on("click",".search-back",function () {
+                tableIns.reload({
+                    where: { //设定异步数据接口的额外参数，任意设
+                        username: ""
+                    }
+                })
+            })
+            $(document).on("click",".add-btn",function () {
+                clearForm();
+                $(".add-submit").attr("data-opt","add").text("添加");
+                articleBox = layer.open({
+                    type: 1,
+                    content: $('#box'),
+                    area: ['600px', 'auto'],
+                    title: "用户添加"
+                });
+            })
+            $(document).on("click",".add-submit",function () {
+                var username = $("#result-username").val();
+                var password = $("#result-password").val();
+                if ($.trim(username) == "" || $.trim(password) == ""){
+                    layer.alert("参数不能为空")
+                    return;
+                }
+                if ($(".add-submit").attr("data-opt") == "add"){
+                    layer.load();
+                    $.ajax({
+                        type: "post",
+                        url: backRoot + "/back/user/add",
+                        headers: {"token":$.cookie("token")},
+                        data: {username:username,password:password},
+                        success: function (result) {
+                            layer.closeAll("loading");
+                            if (result.code == 200){
+                                layer.alert(result.map.data);
+                                layer.close(articleBox);
+                                tableIns.reload({
+                                    page: {
+                                        curr: finishPage
+                                    }
+                                });
+                                return
+                            }
+                            layer.alert(result.map.error)
+                        }
+                    })
+                }else {
+                    layer.load();
+                    $.ajax({
+                        type: "post",
+                        url: backRoot + "/back/user/updatePassword",
+                        headers: {"token":$.cookie("token")},
+                        data: {password:password,userId:$("#result-id").val()},
+                        success: function (result) {
+                            layer.closeAll("loading");
+                            if (result.code == 200){
+                                layer.alert(result.map.data);
+                                layer.close(articleBox);
+                                tableIns.reload({
+                                    page: {
+                                        curr: indexPage
+                                    }
+                                });
+                                return
+                            }
+                            layer.alert(result.map.error)
+                        }
+                    })
+                }
+            })
+            table.on('tool(table)', function(obj) {
+                var data = obj.data;
+                if (obj.event === 'edit') {
+                    $(".add-submit").attr("data-opt","edit").text("修改");
+                    layer.load();
+                    $.ajax({
+                        type: "get",
+                        url: backRoot + "/back/user/get/"+data.id,
+                        headers: {"token":$.cookie("token")},
+                        success: function (result) {
+                            layer.closeAll("loading");
+                            $("#result-id").val(result.map.data.id)
+                            $("#result-username").val(result.map.data.username)
+                            $("#result-password").val(result.map.data.password)
+                        }
+                    })
+                    articleBox = layer.open({
+                        type: 1,
+                        content: $('#box'),
+                        area: ['600px', 'auto'],
+                        title: "用户修改"
+                    });
+                }else if (obj.event === 'del'){
+                    layer.confirm('是否删除该用户?', function(index){
+                        var arr = [];
+                        arr.push(data.id);
+                        layer.load();
+                        $.ajax({
+                            type: "post",
+                            url: backRoot + "/back/user/remove",
+                            headers: {"token":$.cookie("token")},
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify(arr),
+                            success: function (result) {
+                                layer.closeAll("loading");
+                                if(result.code == 200){
+                                    layer.alert("删除成功！");
+                                    tableIns.reload({
+                                        page:{
+                                            curr:1
+                                        }
+                                    });
+                                    return false;
+                                }
+                                layer.alert("删除失败");
+                            }
+                        })
+                        layer.close(index);
+                    });
+                }
+            });
+            $(document).on("click",".remove-btn",function () {
+                var checkStatus = table.checkStatus('table');
+                if (checkStatus.data.length > 0) {
+                    layer.confirm('是否删除选中的用户?', function(index){
+                        layer.load();
+                        var arr = [];
+                        for(var i = 0;i<checkStatus.data.length;i++){
+                            arr.push(checkStatus.data[i].id);
+                        }
+                        $.ajax({
+                            type: "post",
+                            url: backRoot + "/back/user/remove",
+                            headers: {"token":$.cookie("token")},
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify(arr),
+                            success: function (result) {
+                                layer.closeAll("loading");
+                                if (result.code == 200) {
+                                    layer.alert("删除成功");
+                                    tableIns.reload({
+                                        page:{
+                                            curr:1
+                                        }
+                                    });
+                                    return false;
+                                }
+                                layer.alert("删除失败");
+                            }
+                        })
+                        layer.close(index);
+                    })
+                }
+            })
+        });
+
+    </script>
+    <script>
+        function clearForm() {
+            $("#result-username").val("");
+            $("#result-password").val("");
+        }
+    </script>
+</body>
+</html>

@@ -11,12 +11,9 @@ import com.wfmyzyz.book.utils.Msg;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -28,7 +25,7 @@ import java.util.List;
  * @author Miss.Mo
  * @since 2020-03-11
  */
-@Controller
+@RestController
 @RequestMapping("back/user")
 public class UserBackController {
 
@@ -36,8 +33,8 @@ public class UserBackController {
     private IUserService userService;
 
     @ApiOperation(value="分页获取用户列表")
-    @RequestMapping("/getRotationList")
-    public LayuiBackData getUserList(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit,@RequestParam("username") String username){
+    @RequestMapping("/getUserList")
+    public LayuiBackData getUserList(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit,@RequestParam(value = "username",required = false) String username){
         QueryWrapper<User> queryWrapper = new QueryWrapper();
         if (StringUtils.isNotBlank(username)){
             queryWrapper.eq("username",username);
@@ -59,13 +56,14 @@ public class UserBackController {
         if (one != null){
             return Msg.error().add("error","用户已存在");
         }
+        one = new User();
         one.setUsername(username);
         one.setPassword(password);
         boolean save = userService.save(one);
         if (!save){
-            return Msg.error();
+            return Msg.error().add("error","添加失败");
         }
-        return Msg.success();
+        return Msg.success().add("data","添加成功");
     }
 
     @ApiOperation(value="修改密码")
@@ -78,9 +76,19 @@ public class UserBackController {
         user.setPassword(password);
         boolean flag = userService.updateById(user);
         if (!flag){
-            return Msg.error();
+            return Msg.error().add("error","修改失败");
         }
-        return Msg.success();
+        return Msg.success().add("data","修改成功");
+    }
+
+    @ApiOperation(value="获取用户信息")
+    @RequestMapping("/get/{id}")
+    public Msg get(@PathVariable("id") String id){
+        User user = userService.getById(id);
+        if (user == null){
+            return Msg.error().add("error","用户不存在");
+        }
+        return Msg.success().add("data",user);
     }
 
     @ApiOperation(value="删除用户")

@@ -7,6 +7,8 @@ import com.wfmyzyz.book.service.ICollectService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务实现类
@@ -21,5 +23,10 @@ public class CollectServiceImpl extends ServiceImpl<CollectMapper, Collect> impl
     @Override
     public Collect getCollectByUserIdAndBookId(Integer bookId, Integer userId) {
         return this.getOne(new QueryWrapper<Collect>().eq("user_id",userId).eq("book_id",bookId).eq("tb_status","正常"));
+    }
+
+    @Override
+    public List<Collect> getCollectByUserId(Integer id) {
+        return this.list(new QueryWrapper<Collect>().eq("user_id",id).eq("tb_status","正常"));
     }
 }

@@ -120,6 +120,12 @@
                 </div>
                 <label id="book-name-label"></label>
             </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">书籍作者</label>
+                <div class="layui-input-block">
+                    <input type="text" id="book-author" placeholder="请输入作者名" class="layui-input">
+                </div>
+            </div>
             <div class="layui-form-item layui-form-text">
                 <label class="layui-form-label">书籍头图</label>
                 <div class="layui-input-block">
@@ -333,6 +339,7 @@
             var explain = $("#book-explain").val();
             var label = "";
             var uploadUrl = $("#pdf-hidden").val();
+            var author = $("#book-author").val();
             $(".label-box span").each(function () {
                 label[$(this).index()] = $(this).attr("data-id");
                 if ($(this).index() === $(".label-box span").length-1){
@@ -354,7 +361,7 @@
                     type: "post",
                     url: backRoot + "/back/admin/book/book/update",
                     headers: {"token":$.cookie("token")},
-                    data: {"name":title,"headImage":headImage,"introduce":desc,"bookExplain":explain,"labelIds":label,"bookId":$("#book-id").val(),"uploadUrl":uploadUrl},
+                    data: {"name":title,"headImage":headImage,"introduce":desc,"bookExplain":explain,"labelIds":label,"bookId":$("#book-id").val(),"uploadUrl":uploadUrl,"author":author},
                     success: function (result) {
                         layer.closeAll("loading");
                         if (result.code === 200) {
@@ -371,7 +378,7 @@
                     type: "post",
                     url: backRoot + "/back/admin/book/book/add",
                     headers: {"token":$.cookie("token")},
-                    data: {"name":title,"headImage":headImage,"introduce":desc,"bookExplain":explain,"bookType":type,"labelIds":label,"uploadUrl":uploadUrl},
+                    data: {"name":title,"headImage":headImage,"introduce":desc,"bookExplain":explain,"bookType":type,"labelIds":label,"uploadUrl":uploadUrl,"author":author},
                     success: function (result) {
                         layer.closeAll("loading");
                         if (result.code === 200) {
@@ -423,6 +430,7 @@
                     $("#upload-pdf span").text("更改pdf");
                     $("#remove-head").css("display","none");
                     $("#book-id").val(result.map.data.bookId);
+                    $("#book-author").val(result.map.data.author)
                     $("#book-type").val(result.map.data.bookType).attr("disabled","disabled");
                     if (result.map.data.bookType === "pdf") {
                         $(".upload-book-box").css("display","block");

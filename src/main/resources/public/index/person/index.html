@@ -170,17 +170,17 @@
         <div class="layui-form-item">
             <label class="layui-form-label">旧密码</label>
             <div class="layui-input-block">
-                <input type="text" id="oldPassword" name="oldPassword" required  placeholder="请输入旧密码" class="layui-input">
+                <input type="password" id="oldPassword" name="oldPassword" required  placeholder="请输入旧密码" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">新密码</label>
             <div class="layui-input-block">
-                <input name="newPassword" id="newPassword" placeholder="请输入新密码" class="layui-input" />
+                <input type="password" name="newPassword" id="newPassword" placeholder="请输入新密码" class="layui-input" />
             </div>
         </div>
         <div class="layui-form-item">
-            <button class="layui-btn update-btn" style="float: right" data-opt="add">修改</button>
+            <button class="layui-btn update-btn" style="float: right">修改</button>
         </div>
     </div>
 </div>
@@ -196,6 +196,11 @@
 <script>
     var articleBox;
     layui.use(['element','form','layer'], function(){
+        if ($.cookie("username") === undefined || $.cookie("username") === ""){
+            layer.alert("请登录",function () {
+                window.location.href = "/index/login.html"
+            });
+        }
         $(document).on("click",".update-password",function () {
             clearForm();
             articleBox = layer.open({
@@ -204,6 +209,50 @@
                 area: ['600px', '250px'],
                 title: "密码修改"
             });
+        })
+        $(".update-btn").click(function () {
+            if ($.cookie("username") === undefined || $("#oldPassword").val() === "" || $("#newPassword").val() === ""){
+                layer.alert("参数不能为空")
+                return
+            }
+            layer.load()
+            $.ajax({
+                type: "post",
+                url: backRoot + "/user/updatePassword",
+                data: {"username":$.cookie("username"),"password":$("#oldPassword").val(),"passwords":$("#newPassword").val()},
+                success:function (result) {
+                    layer.closeAll("loading")
+                    if (result.code === 200){
+                        layer.alert(result.map.data);
+                        layer.close(articleBox)
+                        return
+                    }
+                    layer.alert(result.map.error);
+                }
+            })
+        })
+        $.ajax({
+            type: "post",
+            url: backRoot + "/user/collectBookList",
+            data: {"username":$.cookie("username")},
+            success: function (result) {
+                if (result.code === 200){
+                    var txt = "";
+                    for (var i = 0;i<result.map.data.length;i++){
+                        txt += '<li class="book">\n' +
+                            '                                    <a target="_blank" href="/index/index/bookAbout.html?bookId='+result.map.data[i].bookId+'">\n' +
+                            '                                        <div class="book-img">\n' +
+                            '                                            <img class="book-url" src="'+result.map.data[i].headImage+'" alt="">\n' +
+                            '                                        </div>\n' +
+                            '                                        <span class="book-name">'+result.map.data[i].name+'</span>\n' +
+                            '                                    </a>\n' +
+                            '                                </li>'
+                    }
+                    $(".book-ul").html(txt)
+                    return
+                }
+                layer.alert(result.map.error);
+            }
         })
     })
     $("#username").text($.cookie("username"))

@@ -16,6 +16,7 @@ import com.wfmyzyz.book.service.impl.BookLabelServiceImpl;
 import com.wfmyzyz.book.service.impl.BookServiceImpl;
 import com.wfmyzyz.book.utils.LayuiBackData;
 import com.wfmyzyz.book.utils.Msg;
+import com.wfmyzyz.book.vo.UserBo;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +100,8 @@ public class BookController {
         /*if (isBook(book.getName()) != null){
             return Msg.error().add("error","书籍名称已存在！");
         }*/
-        book.setPubliser("admin");
+        UserBo user = (UserBo)request.getAttribute("user");
+        book.setPubliser(user.getUsername());
         if (StringUtils.isBlank(book.getAuthor())){
             book.setAuthor(book.getPubliser());
         }

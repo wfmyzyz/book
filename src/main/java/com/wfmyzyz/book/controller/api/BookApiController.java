@@ -201,6 +201,8 @@ public class BookApiController {
                 timeQuery.in("book_id", bookIdList);
                 readQuery.in("book_id", bookIdList);
                 collectQueryWrapper.in("book_id", bookIdList);
+            }else {
+                return Msg.success().add("data",map);
             }
         }
         timeQuery.eq("tb_status", "正常").eq("book_check", BookCheckEnum.上架.toString()).orderByDesc("create_time").last("limit " + max);

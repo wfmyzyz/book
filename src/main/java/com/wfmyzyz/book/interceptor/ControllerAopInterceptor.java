@@ -32,7 +32,7 @@ public class ControllerAopInterceptor {
 
 	// 切入点表达式
 //	@Pointcut("execution(public * com.bingo.hkmarksix.*.controller.*.*.*(..))")
-	@Pointcut("execution(public * com.wfmyzyz.book.controller.back.administrators.admin.*.*(..))")
+	@Pointcut("execution(public * com.wfmyzyz.book.controller.*.*.*(..))")
 	public void privilege() {
 	}
 
