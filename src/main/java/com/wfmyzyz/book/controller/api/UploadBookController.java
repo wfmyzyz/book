@@ -286,6 +286,8 @@ public class UploadBookController {
             bookSerial.setBookId(book.getBookId());
             bookSerialList.add(bookSerial);
             bookSerialService.saveBatch(bookSerialList);
+            book.setSerialNum(bookSerialList.size());
+            bookService.updateById(book);
         } catch (IOException e) {
             e.printStackTrace();
         }

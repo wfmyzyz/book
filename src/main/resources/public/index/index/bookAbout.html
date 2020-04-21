@@ -231,6 +231,10 @@
             window.open("/download/book/"+GetQueryString("bookId"));
         })
         $("#praise").click(function () {
+            if ($.cookie("username") == "" || $.cookie("username") == undefined){
+                alert("请先登录！");
+                return
+            }
             $.ajax({
                 url: backRoot + "/likes/book",
                 type: "post",
@@ -255,6 +259,10 @@
             }
         })
         $(".collection-btn").click(function () {
+            if ($.cookie("username") == "" || $.cookie("username") == undefined){
+                alert("请先登录！");
+                return
+            }
             $.ajax({
                 url: backRoot + "/collect/book",
                 type: "post",
